@@ -12,11 +12,12 @@ blue = (0,0,255)
 
 
 yvelocity = []
-i = -50
-cair = -2*i + 0.5
-while i < cair:
+i = -12
+var = 0.5
+cair = -i 
+while i <= cair:
     yvelocity.append(i)
-    i += 0.5
+    i += var
 
 
 pygame.init()
@@ -35,10 +36,9 @@ class Newton(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.xspeed = 0
-        self.index = 0
-        self.Hplataforma = Htela/2
-        
-        
+        self.velocity_index = 0
+        self.platform_y = 400
+        self.jumping = False
         
     def move(self):
         self.xspeed = 0
@@ -47,26 +47,36 @@ class Newton(pygame.sprite.Sprite):
             self.xspeed = -8
         if key[pygame.K_RIGHT]:
             self.xspeed = 8
-        
         self.rect.x += self.xspeed
-        
+                
     def jump(self):
         global yvelocity
-        if jumping == True:
-            self.rect.y += yvelocity[self.index]
-            self.index += 1
-            if self.index > len(yvelocity) - 1:
-                self.index = len(yvelocity) - 1
-            if self.rect.y > self.Hplataforma:
-                self.rect.y = self.Hplataforma
-                jumping == False
-                self.index = 0
+        if self.jumping:
+            verticalV = yvelocity[self.velocity_index]
+            self.rect.y += verticalV
+            self.velocity_index += 1
+            if self.velocity_index >= len(yvelocity) - 1:
+                self.velocity_index = len(yvelocity) - 1
+            if self.rect.y > self.platform_y:
+                self.rect.y = self.platform_y
+                self.velocity_index = 0
+        self.jumping = False
+            
+            
+    def do_jump(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_UP] and self.jumping == False:
+            self.jumping = True
+            self.jump()
     
+    def do(self):
+        self.do_jump()
+        self.move()
         
-newton = Newton('zombie.png',(Ltela/2),(Htela/2-10))
+newton = Newton('newton.png',(100),(400))
 newton_group = pygame.sprite.Group()
-newton_group.add(newton)     
-jumping = False    
+newton_group.add(newton)
+  
         
 
         
@@ -82,14 +92,8 @@ while vidas >= 0:
         if event.type == pygame.QUIT:
             vidas = -1
     #Newton's movement
-        if key[pygame.K_UP] and jumping == False:
-            jumping = True
-            newton.jump()
-    newton.move()  
+    newton.do()  
          
-            
-            
-            
     tela.fill(white)
     newton_group.draw(tela)
     pygame.display.update()     
