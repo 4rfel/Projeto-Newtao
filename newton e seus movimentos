@@ -1,21 +1,5 @@
 import pygame
 
-Htela = 600
-Ltela = 800
-FPS = 30
-
-white = (255,255,255)
-black = (0,0,0)
-red = (255,0,0)
-green = (0,255,0)
-blue = (0,0,255)
-
-pygame.init()
-
-tela = pygame.display.set_mode((Ltela,Htela))
-pygame.display.set_caption("JOGO NO NEWTON")
-clock = pygame.time.Clock()
-
 class Newton(pygame.sprite.Sprite):
     
     def __init__(self, imagem, x, y):
@@ -69,24 +53,3 @@ class Newton(pygame.sprite.Sprite):
 newton = Newton('newton.png',(100),(390))
 newton_group = pygame.sprite.Group()
 newton_group.add(newton)
-
-
-vidas = 3
-
-while vidas >= 0:
-
-    clock.tick(FPS)
-
-    for event in pygame.event.get():
-    #exit
-        if event.type == pygame.QUIT:
-            vidas = -1
-    #Newton's movement
-    newton.do()
-
-
-    tela.fill(white)
-    newton_group.draw(tela)
-    pygame.display.update()
-
-pygame.display.quit()
