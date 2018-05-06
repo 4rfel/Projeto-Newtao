@@ -33,7 +33,7 @@ heart_group.add(heart3)
 
 ''' REMOVER ESSA PARTE DEPOIS OU USALA PARA TESTAR O PROGRAMA
 
-class Apple(pygame.sprite.Sprite):
+class Rotten_apple(pygame.sprite.Sprite):
     def __init__(self, imagem, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagem)
@@ -41,9 +41,9 @@ class Apple(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         
-apple = Apple('heart-32X32.png',(500),(0))
+rotten_apple = Rotten_apple('rotten_apple-33X49.png',(500),(0))
 apple_group = pygame.sprite.Group()
-apple_group.add(apple)
+apple_group.add(rotten_apple)
 '''
 
 imunidade = FPS
@@ -61,24 +61,24 @@ while vidas > 0:
             if event.key == pygame.K_ESCAPE:
                 vidas = -1
     # lose lifes
-    if pygame.sprite.collide_rect(apple, newton):
+    if pygame.sprite.collide_rect(rotten_apple, newton):
             if vidas == 1 and imunidade == FPS:
                 imunidade -= 1
-                apple.rect.y = -500
-                apple_group.remove(apple)
+                rotten_apple.rect.y = -500
+                apple_group.remove(rotten_apple)
                 heart3.kill()
                 vidas = 0
             if vidas == 2 and imunidade == FPS:
                 imunidade -= 1
-                apple.rect.y = -500
+                rotten_apple.rect.y = -500
                 heart2.kill()
-                apple_group.remove(apple)
+                apple_group.remove(rotten_apple)
                 vidas = 1
             if vidas == 3 and imunidade == FPS:
                 imunidade -= 1
-                apple.rect.y = -500
+                rotten_apple.rect.y = -500
                 heart1.kill()
-                apple_group.remove(apple)
+                apple_group.remove(rotten_apple)
                 vidas = 2
                 
     #Imunidade
@@ -98,6 +98,8 @@ while vidas > 0:
 
     newton.do()
         
+#    rotten_apple.rect.y += 2
+    
     tela.fill(white)
     newton_group.draw(tela)
     heart_group.draw(tela)
