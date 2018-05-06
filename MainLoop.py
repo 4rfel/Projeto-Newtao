@@ -1,6 +1,6 @@
-from ClasseNewton import *
 import pygame
-from Heart import *
+from ClasseNewton import Newton
+from Heart import Heart
 
 Htela = 600
 Ltela = 800
@@ -13,6 +13,7 @@ tela = pygame.display.set_mode((Ltela,Htela))
 pygame.display.set_caption("JOGO NO NEWTON")
 clock = pygame.time.Clock()
 vidas = 3
+pontuacao = 0
 
 #Newton
 newton = Newton('newton-122X175.png',(100),(390))
@@ -22,32 +23,16 @@ newton_maxJump = 20
 maxJump = newton_maxJump
 
 #Heart
-heart1 = Heart('heart-32X32.png',660,50)
-heart2 = Heart('heart-32X32.png',700,50)
-heart3 = Heart('heart-32X32.png',740,50)
+vidas3 = Heart('heart-32X32.png',660,50)
+vidas2 = Heart('heart-32X32.png',700,50)
+vidas1 = Heart('heart-32X32.png',740,50)
 heart_group = pygame.sprite.Group()
-heart_group.add(heart1)
-heart_group.add(heart2)
-heart_group.add(heart3)
+heart_group.add(vidas3)
+heart_group.add(vidas2)
+heart_group.add(vidas1)
 
-
-''' REMOVER ESSA PARTE DEPOIS OU USALA PARA TESTAR O PROGRAMA
-
-class Rotten_apple(pygame.sprite.Sprite):
-    def __init__(self, imagem, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(imagem)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        
-rotten_apple = Rotten_apple('rotten_apple-33X49.png',(500),(0))
-apple_group = pygame.sprite.Group()
-apple_group.add(rotten_apple)
-'''
-
-imunidade = FPS
 key = pygame.key.get_pressed()
+
 #Mainloop
 while vidas > 0:
 
@@ -61,31 +46,42 @@ while vidas > 0:
             if event.key == pygame.K_ESCAPE:
                 vidas = -1
     # lose lifes
-    if pygame.sprite.collide_rect(rotten_apple, newton):
-            if vidas == 1 and imunidade == FPS:
-                imunidade -= 1
-                rotten_apple.rect.y = -500
-                apple_group.remove(rotten_apple)
-                heart3.kill()
-                vidas = 0
-            if vidas == 2 and imunidade == FPS:
-                imunidade -= 1
-                rotten_apple.rect.y = -500
-                heart2.kill()
-                apple_group.remove(rotten_apple)
-                vidas = 1
-            if vidas == 3 and imunidade == FPS:
-                imunidade -= 1
-                rotten_apple.rect.y = -500
-                heart1.kill()
-                apple_group.remove(rotten_apple)
-                vidas = 2
+    colisions = pygame.sprite.spritecollide(newton, rotten_apple_group, True)
+    for e in colisions:
+        if vidas == 1:
+            heart_group.remove(vidas1)
+            vidas = 0
+        if vidas == 2:
+            heart_group.remove(vidas2)
+            vidas = 1
+        if vidas == 3:
+            heart_group.remove(vidas3)
+            vidas = 2
                 
+                
+    colisions = pygame.sprite.spritecollide(newton, apple_group, True)
+    for e in colisions:
+        pontuacao += 1
+#        score.marcouPonto = True
+#        score.do()
+    
+    colisions = pygame.sprite.spritecollide(newton, life_apple_group, True)
+    for e in colisions:
+        if vidas == 1:
+            heart_group.add(vidas2)
+        if vidas == 2:
+            heart_group.add(vidas3)
+        if vidas == 3:
+            pontuacao += 10
+        vidas += 1
+            
+    
+    
     #Imunidade
-    if imunidade < FPS:
+    if imunidade < 3:
         imunidade -= 1
         if imunidade == 0:
-            imunidade = FPS
+            imunidade = 3
     
     #Newton's movement
     if newton.jumping:
@@ -97,13 +93,17 @@ while vidas > 0:
                 newton_maxJump = maxJump
 
     newton.do()
-        
-#    rotten_apple.rect.y += 2
+    normal_apple.cair()
+    rotten_apple.cair()
+    life_apple.cair()
+    rotten_apple1.cair()
     
     tela.fill(white)
     newton_group.draw(tela)
     heart_group.draw(tela)
     apple_group.draw(tela)
+    rotten_apple_group.draw(tela)
+    life_apple_group.draw(tela)
     pygame.display.update()
 
 pygame.display.quit()
