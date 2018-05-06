@@ -74,14 +74,6 @@ while vidas > 0:
         if vidas == 3:
             pontuacao += 10
         vidas += 1
-            
-    
-    
-    #Imunidade
-    if imunidade < 3:
-        imunidade -= 1
-        if imunidade == 0:
-            imunidade = 3
     
     #Newton's movement
     if newton.jumping:
@@ -93,17 +85,10 @@ while vidas > 0:
                 newton_maxJump = maxJump
 
     newton.do()
-    normal_apple.cair()
-    rotten_apple.cair()
-    life_apple.cair()
-    rotten_apple1.cair()
     
     tela.fill(white)
     newton_group.draw(tela)
     heart_group.draw(tela)
-    apple_group.draw(tela)
-    rotten_apple_group.draw(tela)
-    life_apple_group.draw(tela)
     pygame.display.update()
 
 pygame.display.quit()
