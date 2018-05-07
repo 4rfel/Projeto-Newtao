@@ -1,6 +1,10 @@
 import pygame
 from ClasseNewton import Newton
 from Heart import Heart
+from Apple import Apple
+from Rotten_apple import Rotten_apple
+from Falling_heart import Falling_heart
+from random import randrange
 
 Htela = 600
 Ltela = 800
@@ -14,6 +18,17 @@ pygame.display.set_caption("JOGO NO NEWTON")
 clock = pygame.time.Clock()
 vidas = 3
 pontuacao = 0
+
+# apple
+apple = Apple('apple.png',(0),(200),(randrange(1,5)))
+apple_group = pygame.sprite.Group()
+apple_group.add(apple)
+
+#rotten apple
+Rotten_apple = Rotten_apple('rotten_apple-33X49.png',(0),(200),randrange(1,5))
+rotten_apple_group = pygame.sprite.Group()
+rotten_apple_group.add(Rotten_apple)
+
 
 #Newton
 newton = Newton('newton-122X175.png',(100),(390))
@@ -30,6 +45,11 @@ heart_group = pygame.sprite.Group()
 heart_group.add(vidas3)
 heart_group.add(vidas2)
 heart_group.add(vidas1)
+#falling heart
+falling_heart = Falling_heart('heart-32X32.png',(0),(200),randrange(1,5))
+falling_heart_group = pygame.sprite.Group()
+falling_heart_group.add(falling_heart)
+
 
 key = pygame.key.get_pressed()
 
@@ -65,7 +85,7 @@ while vidas > 0:
 #        score.marcouPonto = True
 #        score.do()
     
-    colisions = pygame.sprite.spritecollide(newton, life_apple_group, True)
+    colisions = pygame.sprite.spritecollide(newton, falling_heart_group, True)
     for e in colisions:
         if vidas == 1:
             heart_group.add(vidas2)
