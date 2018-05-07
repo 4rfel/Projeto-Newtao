@@ -57,6 +57,23 @@ key = pygame.key.get_pressed()
 while vidas > 0:
 
     clock.tick(FPS)
+    # parte para ativar o caimento dos objetos
+    aleatorio = randrange(1,100)
+    if aleatorio < 71:
+        apple = Apple('apple.png',(0),(200),(randrange(1,5)))
+        apple_group = pygame.sprite.Group()
+        apple_group.add(apple)
+
+    elif aleatorio > 70 and aleatorio < 95:
+        #ativa rotten_apple
+        Rotten_apple = Rotten_apple('rotten_apple-33X49.png',(0),(200),randrange(1,5))
+        rotten_apple_group = pygame.sprite.Group()
+        rotten_apple_group.add(Rotten_apple)
+    elif aleatorio > 94:
+        #ativa falling_heart
+        falling_heart = Falling_heart('heart-32X32.png',(0),(200),randrange(1,5))
+        falling_heart_group = pygame.sprite.Group()
+        falling_heart_group.add(falling_heart)
 
     for event in pygame.event.get():
     #exit
