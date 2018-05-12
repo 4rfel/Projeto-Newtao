@@ -1,7 +1,7 @@
 import pygame
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, imagem,x, y,vel_x):
+    def __init__(self, imagem, x, y, vel_x):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagem)
         self.rect = self.image.get_rect()

@@ -3,9 +3,23 @@ import os
 
 ALPHA = (0,255,0)
 
+#pygame.joystick.init()
+#gamepad = pygame.joystick.Joystick(0)
+#gamepad.init()
+
+#if 0 == 0:
+#    if gamepad.get_button(0) == True:
+#        print('a')
+#    elif gamepad.get_button(1) == True:
+#        print('b')
+#    elif gamepad.get_button(2) == True:
+#        print('x')
+#    elif gamepad.get_button(3) == True:
+#        print('y')
+
 class Newton(pygame.sprite.Sprite):
     
-    def __init__(self, imagem, x, y):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
         self.frames = 4
@@ -28,12 +42,13 @@ class Newton(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.xspeed = 0
-        self.jumping = False        
+        self.jumping = False
+        self.morrendo = False        
         
     def move(self):
         self.xspeed = 0
         key = pygame.key.get_pressed()
-        if self.rect.x <770:
+        if self.rect.x < 750:
             if key[pygame.K_RIGHT] or key[pygame.K_d]:
                 self.xspeed = 12
                 self.frame += 1
@@ -47,7 +62,8 @@ class Newton(pygame.sprite.Sprite):
                 if self.frame > 3*self.frames:
                     self.frame = 0
                 self.image = self.reverse_images[self.frame//self.frames]
-        self.rect.x += self.xspeed
+        if not self.morrendo:
+            self.rect.x += self.xspeed
         
         
     def do_jump(self):
