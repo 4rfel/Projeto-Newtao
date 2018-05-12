@@ -145,13 +145,11 @@ while vidas > 0:
                     poder_ativado = True
         if not sem_controle:
             r2 = joystick.get_button(7)
-            if r2 and power_cd == 0 and poder_ativado == False:
+            if r2 and power_cd == apples_to_power and poder_ativado == False:
                 if not poder_ativado:
                         power_cd = 0
                 power_bar.power = 0
                 poder_ativado = True
-        
-#        pygame.joystick.Joystick.get_button
                 
      # parte para ativar o caimento dos objetos
     if not poder_ativado:
@@ -336,7 +334,7 @@ if pontuacao > highscore:
     original = json.dumps(str(pontuacao), sort_keys = True, indent = 4)
 else:
     original = str(highscore)
-        
+
 with open('highscore.json','w') as highscore:
     highscore.write(original)
 
