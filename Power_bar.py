@@ -6,7 +6,7 @@ class Power_bar(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
         self.power = 0
-        for i in range(0,7):
+        for i in range(0,6):
             img = pygame.image.load(os.path.join('Power_Bar\\power_bar-' + str(i) + '.png')).convert_alpha()
             self.images.append(img)
             self.image = self.images[self.power]
