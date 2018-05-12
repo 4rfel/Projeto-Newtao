@@ -2,20 +2,16 @@ import pygame
 import os
 
 ALPHA = (0,255,0)
+sem_controle = False
+try:
+    pygame.init()
+    pygame.joystick.init()
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
+    
+except:
+    sem_controle = True
 
-#pygame.joystick.init()
-#gamepad = pygame.joystick.Joystick(0)
-#gamepad.init()
-
-#if 0 == 0:
-#    if gamepad.get_button(0) == True:
-#        print('a')
-#    elif gamepad.get_button(1) == True:
-#        print('b')
-#    elif gamepad.get_button(2) == True:
-#        print('x')
-#    elif gamepad.get_button(3) == True:
-#        print('y')
 
 class Newton(pygame.sprite.Sprite):
     
@@ -48,29 +44,56 @@ class Newton(pygame.sprite.Sprite):
     def move(self):
         self.xspeed = 0
         key = pygame.key.get_pressed()
-        if self.rect.x < 750:
-            if key[pygame.K_RIGHT] or key[pygame.K_d]:
-                self.xspeed = 12
-                self.frame += 1
-                if self.frame > 3*self.frames:
-                    self.frame = 0
-                self.image = self.images[self.frame//self.frames]
-        if self.rect.x >=0:
-            if key[pygame.K_LEFT] or key[pygame.K_a]:
-                self.xspeed = -12
-                self.frame += 1
-                if self.frame > 3*self.frames:
-                    self.frame = 0
-                self.image = self.reverse_images[self.frame//self.frames]
-        if not self.morrendo:
-            self.rect.x += self.xspeed
-        
+        if sem_controle:
+            if self.rect.x < 730:
+                if key[pygame.K_RIGHT] or key[pygame.K_d]:
+                    self.xspeed = 12
+                    self.frame += 1
+                    if self.frame > 3*self.frames:
+                        self.frame = 0
+                    self.image = self.images[self.frame//self.frames]
+            if self.rect.x >=0:
+                if key[pygame.K_LEFT] or key[pygame.K_a]:
+                    self.xspeed = -12
+                    self.frame += 1
+                    if self.frame > 3*self.frames:
+                        self.frame = 0
+                    self.image = self.reverse_images[self.frame//self.frames]
+            if not self.morrendo:
+                self.rect.x += self.xspeed
+            
+        if not sem_controle:
+            horizontalaxis = joystick.get_axis(0)
+            if self.rect.x < 730:
+                if horizontalaxis > 0.1:
+                    self.xspeed = 12
+                    self.frame += 1
+                    if self.frame > 3*self.frames:
+                        self.frame = 0
+                    self.image = self.images[self.frame//self.frames]
+            if self.rect.x >=0:
+                if horizontalaxis < -0.1:
+                    self.xspeed = -12
+                    self.frame += 1
+                    if self.frame > 3*self.frames:
+                        self.frame = 0
+                    self.image = self.reverse_images[self.frame//self.frames]
+                    
+                    
+            if not self.morrendo:
+                self.rect.x += self.xspeed
         
     def do_jump(self):
         key = pygame.key.get_pressed()
-        if key[pygame.K_UP] and not self.jumping or key[pygame.K_w] and not self.jumping:
-            self.jumping = True
-
+        if sem_controle:
+            if key[pygame.K_UP] and not self.jumping or key[pygame.K_w] and not self.jumping:
+                self.jumping = True
+                
+        if not sem_controle:
+            buttonX = joystick.get_button(2)
+            if buttonX:
+                self.jumping = True
+                
     def do(self):
         self.do_jump()
         self.move()

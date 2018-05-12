@@ -33,9 +33,18 @@ def HighScore(highscore):
     tela.blit(text,(0,30))
 
 white = (255,255,255)
+black = (0,0,0)
 red = (255,0,0)
 
 pygame.init()
+sem_controle = False
+try:
+    pygame.joystick.init()
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
+    
+except:
+    sem_controle = True
 
 tela = pygame.display.set_mode((Ltela,Htela))
 pygame.display.set_caption("JOGO NO NEWTON")
@@ -128,13 +137,19 @@ while vidas > 0:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 vidas = -1
-            
-            if event.key == pygame.K_SPACE and power_cd == apples_to_power and poder_ativado == False :
+            if sem_controle:
+                if event.key == pygame.K_SPACE and power_cd == apples_to_power and poder_ativado == False :
+                    if not poder_ativado:
+                        power_cd = 0
+                    power_bar.power = 0
+                    poder_ativado = True
+        if not sem_controle:
+            r2 = joystick.get_button(7)
+            if r2 and power_cd == 0 and poder_ativado == False:
                 if not poder_ativado:
-                    power_cd = 0
+                        power_cd = 0
                 power_bar.power = 0
                 poder_ativado = True
-                
         
 #        pygame.joystick.Joystick.get_button
                 
