@@ -13,7 +13,9 @@ from Buraco import Buraco
 from Power_apple import Power_apple
 from Power_bar import Power_bar
 from Sky import Sky
+from firebase import firebase
 
+firebase=firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
 
 with open('highscore.json', 'r') as h:
     highscore = int(json.loads(h.read()))
@@ -173,26 +175,26 @@ while vidas > 0:
         timer += 1 
         if timer == drop_interval:
             aleatorio = randrange(1,100)
-            if aleatorio <= 59:
-                apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
+            if aleatorio <= 64:
+                apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 apple_group.add(apple)
             
-            if aleatorio >= 60 and aleatorio <= 69:
-                power_apple = Power_apple('Apples\\blue_apple.png',randrange(1,Ltela-100), -20, 3)
+            if aleatorio >= 65 and aleatorio <= 69:
+                power_apple = Power_apple('Apples\\blue_apple.png',randrange(1,Ltela-100), -40, 3)
                 power_apple_group.add(power_apple)
                 
             elif aleatorio >= 70 and aleatorio <= 89:
                 #ativa rotten_apple
-                rotten_apple = Rotten_apple('Apples\\rotten_apple.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
+                rotten_apple = Rotten_apple('Apples\\rotten_apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 rotten_apple_group.add(rotten_apple)
                 
             elif aleatorio >= 90 and aleatorio <= 99 :
                 #ativa falling_heart
-                falling_heart = Falling_heart('Apples\\heart.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
+                falling_heart = Falling_heart('Apples\\heart.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 falling_heart_group.add(falling_heart)
                 
             if aleatorio == 100:
-                golden_apple = Golden_apple('Apples\\golden_apple.png', randrange(1,Ltela-100), -20, 5)
+                golden_apple = Golden_apple('Apples\\golden_apple.png', randrange(1,Ltela-100), -40, 5)
                 golden_apple_group.add(golden_apple)
                 
             timer = 0  
@@ -266,21 +268,24 @@ while vidas > 0:
                 newton.jumping = False
                 newton_maxJump = maxJump
     
-    
+    #newton
     newton.idle_walk()
     newton.do()
+    #sky
+    sky1.lateral()
+    sky2.lateral()
+    #arvore
     arvore1.lateral()
     arvore2.lateral()
+    #chao
     chao_inteiro.lateral()
     chao_inteiro2.lateral()
     chao_inteiro3.lateral()
     buraco.lateral()
     lateral_buraco.lateral()
+    #power bar
     power_bar.update()
-    sky1.lateral()
-    sky2.lateral()
-    
-    
+    #apples
     if not poder_ativado:
         try:
             for apple in apple_group:
@@ -352,8 +357,5 @@ else:
 
 with open('highscore.json','w') as highscore:
     highscore.write(original)
-
-print(dificuldade)
-print(drop_interval)
 
 pygame.display.quit()
