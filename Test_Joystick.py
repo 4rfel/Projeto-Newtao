@@ -1,27 +1,32 @@
-import pygame, sys, time
+import pygame
 
+#basico
 pygame.init()
+clock = pygame.time.Clock()
+FPS = 30
+rodando = True
+
+#basico do joystick
 pygame.joystick.init()
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 screen = pygame.display.set_mode((400,300))
 pygame.display.set_caption('Controle')
 
-interval = 0.01
 
-loopQuit = False
-while loopQuit == False:
+while rodando:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            loopQuit = True
+            rodando = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                loopQuit = True
+                rodando = False
+    clock.tick(FPS)
+    pygame.display.update()
     
    #analogicos, eles tambem pegam os comandos das setinhas
-    # analogico da esquerda
-   
+   # analogico da esquerda
     verticalaxis = joystick.get_axis(1)
     if verticalaxis < -0.1:
          print('pulo')
@@ -52,9 +57,6 @@ while loopQuit == False:
     # exemplo de codigo:
     if X:
         print('apertou o x')
-
-    pygame.display.update()
-    time.sleep(interval)
-
+ 
+    
 pygame.quit()
-sys.exit()
