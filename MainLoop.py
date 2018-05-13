@@ -15,7 +15,8 @@ from Power_bar import Power_bar
 from Sky import Sky
 from firebase import firebase
 
-firebase=firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
+firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
+#highscore = firebase.get('highscore', None)
 
 with open('highscore.json', 'r') as h:
     highscore = int(json.loads(h.read()))
@@ -172,12 +173,16 @@ while vidas > 0:
                     power_bar.power = 0
                     poder_ativado = True
         if not sem_controle:
-            r2 = joystick.get_button(7)
-            if r2 and power_cd == apples_to_power and poder_ativado == False:
+            R2 = joystick.get_button(7)
+            L3 = joystick.get_button(10)
+            R3 = joystick.get_button(11)
+            if R2 and power_cd == apples_to_power and poder_ativado == False:
                 if not poder_ativado:
                         power_cd = 0
                 power_bar.power = 0
                 poder_ativado = True
+            if L3 and R3:
+                FPS = 100
     
     # poder especial
     if poder_ativado:
@@ -195,16 +200,16 @@ while vidas > 0:
                 apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 apple_group.add(apple)
             
-            if aleatorio >= 65 and aleatorio <= 69:
+            if aleatorio >= 65 and aleatorio <= 68:
                 power_apple = Power_apple('Apples\\blue_apple.png',randrange(1,Ltela-100), -40, 3)
                 power_apple_group.add(power_apple)
                 
-            elif aleatorio >= 70 and aleatorio <= 89:
+            if aleatorio >= 69 and aleatorio <= 89:
                 #ativa rotten_apple
                 rotten_apple = Rotten_apple('Apples\\rotten_apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 rotten_apple_group.add(rotten_apple)
                 
-            elif aleatorio >= 90 and aleatorio <= 99 :
+            if aleatorio >= 90 and aleatorio <= 99 :
                 #ativa falling_heart
                 falling_heart = Falling_heart('Apples\\heart.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 falling_heart_group.add(falling_heart)
@@ -314,12 +319,14 @@ while vidas > 0:
         try:
             for rotten_apple in rotten_apple_group:
                 rotten_apple.cair()
+                if rotten_apple.rect.y >= Htela:
+                    rotten_apple_group.remove(rotten_apple)
         except:''
         try:
             for falling_heart in falling_heart_group:
                 falling_heart.cair()
                 if falling_heart.rect.y >= Htela:
-                    rotten_apple_group.remove(rotten_apple)
+                    falling_heart_group.remove(falling_heart)
         except:''
         try:
             for golden_apple in golden_apple_group:
