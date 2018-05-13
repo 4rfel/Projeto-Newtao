@@ -34,12 +34,17 @@ def HighScore(highscore):
     font = pygame.font.SysFont(None, 25)
     text = font.render("HighScore: " + str(highscore), True, red)
     tela.blit(text,(0,30))
+    
+def NewHighScore(highscore):
+    font = pygame.font.SysFont(None, 30)
+    text = font.render(" NEW HighScore: " + str(highscore), True, red)
+    tela.blit(text,(0,35))
 
-white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
 
 pygame.init()
+#testa sem esta ou na com o controle conectado
 sem_controle = False
 try:
     pygame.joystick.init()
@@ -54,7 +59,7 @@ pygame.display.set_caption("JOGO NO NEWTON")
 clock = pygame.time.Clock()
 vidas = 3
 pontuacao = 0
-timer = 0
+
 
 
 #  Arvores
@@ -69,6 +74,7 @@ arvore_group.add(arvore2)
 
 # Sky
 vel_sky = 1
+
 sky1 = Sky('Fundos\\sky.png',0,0,vel_sky)
 sky2 = Sky('Fundos\\sky.png',800,0,vel_sky)
 sky_group = pygame.sprite.Group()
@@ -139,6 +145,7 @@ power_apple_group = pygame.sprite.Group()
 
 
 # Dificuldade
+difuldade_timer = 0
 dificuldade = 5
 timer_dificuldade = 0
 drop_interval = FPS
@@ -156,6 +163,8 @@ while vidas > 0:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 vidas = -1
+            if event.key == pygame.K_9:
+                FPS = 100
             if sem_controle:
                 if event.key == pygame.K_SPACE and power_cd == apples_to_power and poder_ativado == False :
                     if not poder_ativado:
@@ -169,11 +178,18 @@ while vidas > 0:
                         power_cd = 0
                 power_bar.power = 0
                 poder_ativado = True
+    
+    # poder especial
+    if poder_ativado:
+        timer_poder += 1
+        if timer_poder == FPS*5:
+            poder_ativado = False
+            timer_poder = 0
                 
-     # parte para ativar o caimento dos objetos
+     # spawn dos maças
     if not poder_ativado:
-        timer += 1 
-        if timer == drop_interval:
+        difuldade_timer += 1 
+        if difuldade_timer == drop_interval:
             aleatorio = randrange(1,100)
             if aleatorio <= 64:
                 apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
@@ -197,8 +213,8 @@ while vidas > 0:
                 golden_apple = Golden_apple('Apples\\golden_apple.png', randrange(1,Ltela-100), -40, 5)
                 golden_apple_group.add(golden_apple)
                 
-            timer = 0  
-    
+            difuldade_timer = 0  
+    # aumento de dificuldade
     timer_dificuldade += 1
     if timer_dificuldade == 20*FPS:
         if dificuldade <= 60:
@@ -208,7 +224,7 @@ while vidas > 0:
         timer_dificuldade = 0
     
     
-    # lose lifes
+    # pegar maça podre
     colisions = pygame.sprite.spritecollide(newton, rotten_apple_group, True)
     for e in colisions:
         if vidas == 1:
@@ -220,7 +236,8 @@ while vidas > 0:
         if vidas == 3:
             heart_group.remove(vidas3)
             vidas = 2
-    
+            
+    #cair no buraco
     colisions = pygame.sprite.spritecollide(newton, buraco_group, False)
     for e in colisions:
         newton.morrendo = True
@@ -232,23 +249,23 @@ while vidas > 0:
             heart_group.remove(vidas2)
             heart_group.remove(vidas3)
             vidas = -1
-    
+    #coletar maças
     colisions = pygame.sprite.spritecollide(newton, apple_group, True)
     for e in colisions:
         pontuacao += 1
-    
+    #pegar maça azul
     colisions = pygame.sprite.spritecollide(newton, power_apple_group, True)
     for e in colisions:
         if power_bar.power < apples_to_power:
             power_bar.power += 1
             power_cd += 1
         pontuacao += 5
-        
+    # pegar maça de ouro
     colisions = pygame.sprite.spritecollide(newton, golden_apple_group, True)
     for e in colisions:
         pontuacao += 150
         
-    #gain lifes
+    #pegar coraçoes
     colisions = pygame.sprite.spritecollide(newton, falling_heart_group, True)
     for e in colisions:
         if vidas == 1:
@@ -317,12 +334,8 @@ while vidas > 0:
                     power_apple_group.remove(power_apple)
         except:''
     
-    if poder_ativado:
-        timer_poder += 1
-        if timer_poder == FPS*5:
-            poder_ativado = False
-            timer_poder = 0
-        
+    
+    # intervalo minimo entre os buracos
     timer_buraco += 1
     if timer_buraco == FPS*11:
         aleatorio = randrange(1,4)
@@ -331,21 +344,31 @@ while vidas > 0:
             lateral_buraco.rect.x = 800
         timer_buraco = 0
     
-    tela.fill(white)
+    # background
+    
     sky_group.draw(tela)
     arvore_group.draw(tela)
+    Score(pontuacao)
+    if pontuacao < highscore:
+        HighScore(highscore)
+    else:
+        NewHighScore(pontuacao)
+    heart_group.draw(tela)
+    #chao
     chao_group.draw(tela)
     lateral_group.draw(tela)
     power_bar_group.draw(tela)
-    Score(pontuacao)
-    HighScore(highscore)
+    #player
     newton_group.draw(tela)
-    golden_apple_group.draw(tela)
-    heart_group.draw(tela)
+    #apples
     apple_group.draw(tela)
+    golden_apple_group.draw(tela)
     power_apple_group.draw(tela)
     rotten_apple_group.draw(tela)
     falling_heart_group.draw(tela)
+    
+    
+    
     pygame.display.update()
 
 
