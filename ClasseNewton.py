@@ -3,14 +3,20 @@ import os
 
 ALPHA = (0,255,0)
 sem_controle = False
+
 try:
-    pygame.init()
     pygame.joystick.init()
     joystick = pygame.joystick.Joystick(0)
     joystick.init()
     
 except:
     sem_controle = True
+
+pygame.mixer.init()
+pygame.init()
+right_feet = pygame.mixer.Sound('Sound_effects\\sfx_step_grass_r.wav')
+left_feet = pygame.mixer.Sound('Sound_effects\\sfx_step_grass_l.wav')
+
 
 
 class Newton(pygame.sprite.Sprite):
@@ -39,7 +45,8 @@ class Newton(pygame.sprite.Sprite):
         self.rect.y = y
         self.xspeed = 0
         self.jumping = False
-        self.morrendo = False        
+        self.morrendo = False 
+        self.pe = True
         
     def move(self):
         self.xspeed = 0
@@ -60,7 +67,7 @@ class Newton(pygame.sprite.Sprite):
                         self.frame = 0
                     self.image = self.reverse_images[self.frame//self.frames]
             if not self.morrendo:
-                self.rect.x += self.xspeeds
+                self.rect.x += self.xspeed
             
         if not sem_controle:
             horizontalaxis = joystick.get_axis(0)
@@ -97,6 +104,16 @@ class Newton(pygame.sprite.Sprite):
     def idle_walk(self):
         self.frame += 1
         if self.frame == self.frames*4:
+#            if self.pe:
+#                pygame.mixer.Sound.stop(left_feet)
+#                pygame.mixer.Sound.set_volume(right_feet,0.1)
+#                pygame.mixer.Sound.play(right_feet)
+#                self.pe = False
+#            else:
+#                pygame.mixer.Sound.stop(right_feet)
+#                pygame.mixer.Sound.set_volume(left_feet,0.1)
+#                pygame.mixer.Sound.play(left_feet)
+#                self.pe = True
             self.frame = 0
         self.image = self.images[self.frame//self.frames]
     

@@ -45,6 +45,11 @@ black = (0,0,0)
 red = (255,0,0)
 
 pygame.init()
+pygame.mixer.init()
+backgrond_sound = pygame.mixer.Sound('Sound_effects\\background_sound.ogg')
+pygame.mixer.Sound.set_volume(backgrond_sound,0.3)
+pygame.mixer.Sound.play(backgrond_sound)
+
 #testa sem esta ou na com o controle conectado
 sem_controle = False
 try:
@@ -60,7 +65,6 @@ pygame.display.set_caption("JOGO NO NEWTON")
 clock = pygame.time.Clock()
 vidas = 3
 pontuacao = 0
-
 
 
 #  Arvores
@@ -118,7 +122,7 @@ heart_group.add(vidas1)
 
 
 #Newton
-newton = Newton(0,340)
+newton = Newton(200,340)
 newton_group = pygame.sprite.Group()
 newton_group.add(newton)
 newton_maxJump = 18
@@ -225,7 +229,8 @@ while vidas > 0:
         if dificuldade <= 60:
             dificuldade += 1
         if dificuldade > 60:
-            drop_interval -= 1
+            if drop_interval > 0:
+                drop_interval -= 1
         timer_dificuldade = 0
     
     
@@ -378,6 +383,7 @@ while vidas > 0:
     
     pygame.display.update()
 
+pygame.mixer.Sound.stop(backgrond_sound)
 
 
 if pontuacao > highscore:
