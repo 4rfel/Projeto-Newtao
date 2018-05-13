@@ -15,5 +15,4 @@ class Power_bar(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-#        if self.power <= 6:
-            self.image = self.images[self.power]
+        self.image = self.images[self.power]

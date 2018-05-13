@@ -20,7 +20,7 @@ class Newton(pygame.sprite.Sprite):
         self.images = []
         self.frames = 4
         self.reverse_images = []
-        for i in range(6,11):
+        for i in range(6,10):
             img = pygame.image.load(os.path.join('Newtons\\newton' + str(i) + '.png')).convert_alpha()
             img = pygame.transform.scale(img, (75, 100))
             img.set_colorkey(ALPHA)
@@ -60,7 +60,7 @@ class Newton(pygame.sprite.Sprite):
                         self.frame = 0
                     self.image = self.reverse_images[self.frame//self.frames]
             if not self.morrendo:
-                self.rect.x += self.xspeed
+                self.rect.x += self.xspeeds
             
         if not sem_controle:
             horizontalaxis = joystick.get_axis(0)
@@ -68,14 +68,14 @@ class Newton(pygame.sprite.Sprite):
                 if horizontalaxis > 0.1:
                     self.xspeed = 12
                     self.frame += 1
-                    if self.frame > 3*self.frames:
+                    if self.frame > self.frames*2:
                         self.frame = 0
                     self.image = self.images[self.frame//self.frames]
             if self.rect.x >=0:
                 if horizontalaxis < -0.1:
                     self.xspeed = -12
                     self.frame += 1
-                    if self.frame > 3*self.frames:
+                    if self.frame > self.frames*2:
                         self.frame = 0
                     self.image = self.reverse_images[self.frame//self.frames]
                     
@@ -93,7 +93,13 @@ class Newton(pygame.sprite.Sprite):
             buttonX = joystick.get_button(2)
             if buttonX:
                 self.jumping = True
-                
+         
+    def idle_walk(self):
+        self.frame += 1
+        if self.frame == self.frames*4:
+            self.frame = 0
+        self.image = self.images[self.frame//self.frames]
+    
     def do(self):
         self.do_jump()
         self.move()

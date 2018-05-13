@@ -6,12 +6,13 @@ from Rotten_apple import Rotten_apple
 from Falling_heart import Falling_heart
 from GoldenApple import Golden_apple
 from random import randrange
-from background import Background
+from background import Arvores
 import json
 from Chaos import Chao_continuo
 from Buraco import Buraco
 from Power_apple import Power_apple
 from Power_bar import Power_bar
+from Sky import Sky
 
 
 with open('highscore.json', 'r') as h:
@@ -54,35 +55,53 @@ pontuacao = 0
 timer = 0
 
 
-#  Fundo
-vel_back = 3
-background1 = Background("Fundos\\background.png",0,0,vel_back)
-background2 = Background("Fundos\\background.png",800,0,vel_back)
-background_group = pygame.sprite.Group()
-background_group.add(background1)
-background_group.add(background2)
+#  Arvores
+vel_arvores = 4
+
+arvore1 = Arvores("Fundos\\background.png",0,0,vel_arvores)
+arvore2 = Arvores("Fundos\\background.png",810,0,vel_arvores)
+arvore_group = pygame.sprite.Group()
+arvore_group.add(arvore1)
+arvore_group.add(arvore2)
+
+
+# Sky
+vel_sky = 1
+sky1 = Sky('Fundos\\sky.png',0,0,vel_sky)
+sky2 = Sky('Fundos\\sky.png',800,0,vel_sky)
+sky_group = pygame.sprite.Group()
+sky_group.add(sky1)
+sky_group.add(sky2)
 
 
 # Chao
-chao_inteiro = Chao_continuo('Fundos\\chao_inteiro.png',0,429,vel_back)
-chao_inteiro2 = Chao_continuo('Fundos\\chao_inteiro.png',800,429,vel_back)
+vel_chao = 5
+timer_buraco = 0
+timer_chao = 0
+troca_chao = True
+morrer = 0
+
+chao_inteiro = Chao_continuo('Fundos\\grass.png',0,422,vel_chao)
+chao_inteiro2 = Chao_continuo('Fundos\\grass.png',700,422,vel_chao)
+chao_inteiro3 = Chao_continuo('Fundos\\grass.png',1200,422,vel_chao)
 chao_group = pygame.sprite.Group()
 chao_group.add(chao_inteiro)
 chao_group.add(chao_inteiro2)
+chao_group.add(chao_inteiro3)
 
-
-buraco = Buraco('Fundos\\buraco.png', -500, 429, vel_back)
-lateral_buraco = Buraco('Fundos\\lateral.png', -500, 429, vel_back)
+buraco = Buraco('Fundos\\buraco.png', -500, 410, vel_chao)
 buraco_group = pygame.sprite.Group()
 buraco_group.add(buraco)
+
+lateral_buraco = Buraco('Fundos\\lateral.png', -500, 425, vel_chao)
 lateral_group = pygame.sprite.Group()
 lateral_group.add(lateral_buraco)
 
 
 #Heart
-vidas3 = Heart('Apples\\heart-32X32.png',660,50)
-vidas2 = Heart('Apples\\heart-32X32.png',700,50)
-vidas1 = Heart('Apples\\heart-32X32.png',740,50)
+vidas3 = Heart('Apples\\heart.png',660,50)
+vidas2 = Heart('Apples\\heart.png',700,50)
+vidas1 = Heart('Apples\\heart.png',740,50)
 heart_group = pygame.sprite.Group()
 heart_group.add(vidas3)
 heart_group.add(vidas2)
@@ -90,14 +109,20 @@ heart_group.add(vidas1)
 
 
 #Newton
-newton = Newton(0,350)
+newton = Newton(0,340)
 newton_group = pygame.sprite.Group()
 newton_group.add(newton)
 newton_maxJump = 18
 maxJump = newton_maxJump
+newton_idle = 0
 
 
 # Power bar
+timer_poder = 0
+power_cd = 0
+apples_to_power = 5
+poder_ativado = False
+
 power_bar = Power_bar(20,450)
 power_bar_group = pygame.sprite.Group()
 power_bar_group.add(power_bar)
@@ -111,18 +136,10 @@ golden_apple_group = pygame.sprite.Group()
 power_apple_group = pygame.sprite.Group()
 
 
+# Dificuldade
 dificuldade = 5
 timer_dificuldade = 0
-timer_chao = 0
-troca_chao = True
-morrer = 0
-timer_buraco = 0
-timer_poder = 0
-apples_to_power = 5
-poder_ativado = False
 drop_interval = FPS
-power_cd = 0
-
 
 
 #Mainloop
@@ -156,22 +173,22 @@ while vidas > 0:
         timer += 1 
         if timer == drop_interval:
             aleatorio = randrange(1,100)
-            if aleatorio <= 64:
+            if aleatorio <= 59:
                 apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
                 apple_group.add(apple)
             
-            if aleatorio >= 65 and aleatorio <= 69:
+            if aleatorio >= 60 and aleatorio <= 69:
                 power_apple = Power_apple('Apples\\blue_apple.png',randrange(1,Ltela-100), -20, 3)
                 power_apple_group.add(power_apple)
                 
             elif aleatorio >= 70 and aleatorio <= 89:
                 #ativa rotten_apple
-                rotten_apple = Rotten_apple('Apples\\rotten_apple-33X49.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
+                rotten_apple = Rotten_apple('Apples\\rotten_apple.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
                 rotten_apple_group.add(rotten_apple)
                 
             elif aleatorio >= 90 and aleatorio <= 99 :
                 #ativa falling_heart
-                falling_heart = Falling_heart('Apples\\heart-32X32.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
+                falling_heart = Falling_heart('Apples\\heart.png', randrange(1,Ltela-100), -20, randrange(1,dificuldade))
                 falling_heart_group.add(falling_heart)
                 
             if aleatorio == 100:
@@ -207,7 +224,7 @@ while vidas > 0:
         newton.morrendo = True
         newton.rect.y += morrer
         morrer += 1
-        newton.rect.x -= vel_back
+        newton.rect.x -= vel_chao
         if morrer >= 15:
             heart_group.remove(vidas1)
             heart_group.remove(vidas2)
@@ -249,14 +266,20 @@ while vidas > 0:
                 newton.jumping = False
                 newton_maxJump = maxJump
     
+    
+    newton.idle_walk()
     newton.do()
-    background1.lateral()
-    background2.lateral()
+    arvore1.lateral()
+    arvore2.lateral()
     chao_inteiro.lateral()
     chao_inteiro2.lateral()
+    chao_inteiro3.lateral()
     buraco.lateral()
     lateral_buraco.lateral()
     power_bar.update()
+    sky1.lateral()
+    sky2.lateral()
+    
     
     if not poder_ativado:
         try:
@@ -295,27 +318,18 @@ while vidas > 0:
             poder_ativado = False
             timer_poder = 0
         
-    timer_chao += 1
-    if timer_chao == FPS*9:
-        if troca_chao:
-            chao_inteiro.rect.x = 800
-            troca_chao = False
-        else:
-            chao_inteiro2.rect.x = 800
-            troca_chao = True
-        timer_chao = 0
-        
     timer_buraco += 1
     if timer_buraco == FPS*11:
         aleatorio = randrange(1,4)
-        if aleatorio >= 1:
+        if aleatorio <= 5:
             buraco.rect.x = 900
             lateral_buraco.rect.x = 800
         timer_buraco = 0
     
     tela.fill(white)
+    sky_group.draw(tela)
+    arvore_group.draw(tela)
     chao_group.draw(tela)
-    background_group.draw(tela)
     lateral_group.draw(tela)
     power_bar_group.draw(tela)
     Score(pontuacao)
@@ -324,6 +338,7 @@ while vidas > 0:
     golden_apple_group.draw(tela)
     heart_group.draw(tela)
     apple_group.draw(tela)
+    power_apple_group.draw(tela)
     rotten_apple_group.draw(tela)
     falling_heart_group.draw(tela)
     pygame.display.update()

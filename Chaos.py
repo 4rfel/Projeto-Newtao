@@ -9,4 +9,7 @@ class Chao_continuo(pygame.sprite.Sprite):
         self.rect.y = y
         self.vel_x = vel_x
     def lateral(self):
-        self.rect.x -= self.vel_x
+        if self.rect.x >= -850:
+            self.rect.x -= self.vel_x
+        else:
+            self.rect.x = 850
