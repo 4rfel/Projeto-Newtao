@@ -13,10 +13,15 @@ from Buraco import Buraco
 from Power_apple import Power_apple
 from Power_bar import Power_bar
 from Sky import Sky
+from Mostrador import Mostrador
+from Menu import Menu_imagens
 from firebase import firebase
 
-firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
-#highscore = firebase.get('highscore', None)
+firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com', None)
+#if firebase.get('highscore', None) is None:
+#    highscore = {}
+#else:
+#    highscore = firebase.get('highscore', None)
 
 with open('highscore.json', 'r') as h:
     highscore = int(json.loads(h.read()))
@@ -24,7 +29,8 @@ with open('highscore.json', 'r') as h:
 #highscore = 0
 Htela = 500
 Ltela = 800
-FPS = 30
+
+
 
 def Score(pontuacao):
     font = pygame.font.SysFont(None, 25)
@@ -47,24 +53,23 @@ red = (255,0,0)
 pygame.init()
 pygame.mixer.init()
 backgrond_sound = pygame.mixer.Sound('Sound_effects\\background_sound.ogg')
-pygame.mixer.Sound.set_volume(backgrond_sound,0.3)
-pygame.mixer.Sound.play(backgrond_sound)
+#backgrond_sound = pygame.mixer.Sound('Sound_effects\\aa.wav')
+pygame.mixer.Sound.stop(backgrond_sound)
 
-#testa sem esta ou na com o controle conectado
-sem_controle = False
+
 try:
     pygame.joystick.init()
     joystick = pygame.joystick.Joystick(0)
     joystick.init()
-    
-except:
-    sem_controle = True
+except:''
 
 tela = pygame.display.set_mode((Ltela,Htela))
 pygame.display.set_caption("JOGO NO NEWTON")
 clock = pygame.time.Clock()
 vidas = 3
 pontuacao = 0
+
+         
 
 
 #  Arvores
@@ -149,18 +154,76 @@ golden_apple_group = pygame.sprite.Group()
 power_apple_group = pygame.sprite.Group()
 
 
+paused = False
+
+#menu
+menu  = Menu_imagens('Menus\\menu_atual-0.png',0,0)
+menu_group = pygame.sprite.Group()
+menu_group.add(menu)
+
+FPS = 30
+
+sem_controle = True              
+menu_rodando = True
+# menu
+while menu_rodando:
+    clock.tick(FPS)
+    
+    for event in pygame.event.get():
+         if event.type == pygame.QUIT :
+             menu  = False
+             vidas = -1
+         if event.type == pygame.KEYDOWN:
+             if event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_ESCAPE:
+                     vidas = -1
+                     menu_rodando = False
+             if event.key == pygame.K_SPACE:
+                 sem_controle = True
+                 menu_rodando = False
+                 FPS = 45
+                 newton.sem_controle = True
+    try:            
+        X = joystick.get_button(2)
+        if X:
+            FPS = 45
+            sem_controle = False
+            menu_rodando = False
+            newton.sem_controle = False
+    except:''
+    
+    
+    menu_group.draw(tela)
+    pygame.display.update()
+    
+    
+    
+
+#Mostrador da maças
+some = 0
+if sem_controle:
+    mostrador = Mostrador('Fundos\\mostrador_teclado.png',(Ltela/2-100),(Htela/2-71))
+if not sem_controle:
+    mostrador = Mostrador('Fundos\\mostrador_controle.png',(Ltela/2-100),(Htela/2-71))
+mostrador_group = pygame.sprite.Group()
+mostrador_group.add(mostrador)
+
+
 # Dificuldade
 difuldade_timer = 0
 dificuldade = 5
 timer_dificuldade = 0
-drop_interval = FPS
-
-
+drop_interval = 30
+miguezao = 0
+elmigue = pygame.mixer.music.set_endevent()
 #Mainloop
 while vidas > 0:
 
     clock.tick(FPS)
-
+    miguezao += 1
+    if miguezao == 1:
+        pygame.mixer.Sound.set_volume(backgrond_sound,0.3)
+        pygame.mixer.Sound.play(backgrond_sound)
     for event in pygame.event.get():
     #exit
         if event.type == pygame.QUIT :
@@ -170,12 +233,25 @@ while vidas > 0:
                 vidas = -1
             if event.key == pygame.K_9:
                 FPS = 100
+            if event.key == pygame.K_p:
+                
+                if not paused:
+                    paused = True
+#                if paused:
+#                    FPS = inicialFPS
+#                    paused = False
+        if elmigue:
+            print('a')
+            pygame.mixer.Sound.stop(backgrond_sound)
+            pygame.mixer.Sound.play(backgrond_sound)
+                
             if sem_controle:
                 if event.key == pygame.K_SPACE and power_cd == apples_to_power and poder_ativado == False :
                     if not poder_ativado:
                         power_cd = 0
                     power_bar.power = 0
                     poder_ativado = True
+                
         if not sem_controle:
             R2 = joystick.get_button(7)
             L3 = joystick.get_button(10)
@@ -199,12 +275,12 @@ while vidas > 0:
     if not poder_ativado:
         difuldade_timer += 1 
         if difuldade_timer == drop_interval:
-            aleatorio = randrange(1,100)
-            if aleatorio <= 64:
+            aleatorio = randrange(1,101)
+            if aleatorio <= 60:
                 apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 apple_group.add(apple)
             
-            if aleatorio >= 65 and aleatorio <= 68:
+            if aleatorio >= 61 and aleatorio <= 68:
                 power_apple = Power_apple('Apples\\blue_apple.png',randrange(1,Ltela-100), -40, 3)
                 power_apple_group.add(power_apple)
                 
@@ -218,7 +294,7 @@ while vidas > 0:
                 falling_heart = Falling_heart('Apples\\heart.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 falling_heart_group.add(falling_heart)
                 
-            if aleatorio == 100:
+            if aleatorio >= 100:
                 golden_apple = Golden_apple('Apples\\golden_apple.png', randrange(1,Ltela-100), -40, 5)
                 golden_apple_group.add(golden_apple)
                 
@@ -313,48 +389,57 @@ while vidas > 0:
     #power bar
     power_bar.update()
     #apples
-    if not poder_ativado:
-        try:
-            for apple in apple_group:
-                apple.cair()
-                if apple.rect.y >= Htela:
-                    pontuacao -= 1
-                    apple_group.remove(apple)
-        except:''
-        try:
-            for rotten_apple in rotten_apple_group:
-                rotten_apple.cair()
-                if rotten_apple.rect.y >= Htela:
-                    rotten_apple_group.remove(rotten_apple)
-        except:''
-        try:
-            for falling_heart in falling_heart_group:
-                falling_heart.cair()
-                if falling_heart.rect.y >= Htela:
-                    falling_heart_group.remove(falling_heart)
-        except:''
-        try:
-            for golden_apple in golden_apple_group:
-                golden_apple.cair()
-                if golden_apple.rect.y >= Htela:
-                    golden_apple_group.remove(golden_apple)
-        except:''
-        try:
-            for power_apple in power_apple_group:
-                power_apple.cair()
-                if power_apple < Htela:
-                    power_apple_group.remove(power_apple)
-        except:''
     
-    
-    # intervalo minimo entre os buracos
-    timer_buraco += 1
-    if timer_buraco == FPS*11:
-        aleatorio = randrange(1,4)
-        if aleatorio <= 5:
-            buraco.rect.x = 900
-            lateral_buraco.rect.x = 800
-        timer_buraco = 0
+    some += 1
+    if some >= 5*FPS:
+        mostrador.rect.y += 3
+        if mostrador.rect.y >= Htela:
+            mostrador.kill()
+            
+            
+    if some >= 5*FPS:
+        if not poder_ativado:
+            try:
+                for apple in apple_group:
+                    apple.cair()
+                    if apple.rect.y >= Htela:
+                        pontuacao -= 1
+                        apple_group.remove(apple)
+            except:''
+            try:
+                for rotten_apple in rotten_apple_group:
+                    rotten_apple.cair()
+                    if rotten_apple.rect.y >= Htela:
+                        rotten_apple_group.remove(rotten_apple)
+            except:''
+            try:
+                for falling_heart in falling_heart_group:
+                    falling_heart.cair()
+                    if falling_heart.rect.y >= Htela:
+                        falling_heart_group.remove(falling_heart)
+            except:''
+            try:
+                for golden_apple in golden_apple_group:
+                    golden_apple.cair()
+                    if golden_apple.rect.y >= Htela:
+                        golden_apple_group.remove(golden_apple)
+            except:''
+            try:
+                for power_apple in power_apple_group:
+                    power_apple.cair()
+                    if power_apple < Htela:
+                        power_apple_group.remove(power_apple)
+            except:''
+        
+        
+        # intervalo minimo entre os buracos
+        timer_buraco += 1
+        if timer_buraco == FPS*11:
+            aleatorio = randrange(1,4)
+            if aleatorio <= 5:
+                buraco.rect.x = 900
+                lateral_buraco.rect.x = 800
+            timer_buraco = 0
     
     # background
     
@@ -379,6 +464,7 @@ while vidas > 0:
     rotten_apple_group.draw(tela)
     falling_heart_group.draw(tela)
     
+    mostrador_group.draw(tela)
     
     
     pygame.display.update()
