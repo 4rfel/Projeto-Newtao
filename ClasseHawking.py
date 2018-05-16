@@ -3,7 +3,6 @@ import os
 
 ALPHA = (0,255,0)
 
-    
 sem_controle = False
 try:
     pygame.joystick.init()
@@ -15,8 +14,8 @@ except:''
 pygame.init()
 
 
-class Einstein(pygame.sprite.Sprite):
-    
+class Hawking(pygame.sprite.Sprite):
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
@@ -41,10 +40,10 @@ class Einstein(pygame.sprite.Sprite):
         self.rect.y = y
         self.xspeed = 0
         self.jumping = False
-        self.morrendo = False 
+        self.morrendo = False
         self.pe = True
         self.sem_controle = False
-        
+
     def move(self):
         self.xspeed = 0
         key = pygame.key.get_pressed()
@@ -65,7 +64,7 @@ class Einstein(pygame.sprite.Sprite):
                     self.image = self.reverse_images[self.frame//self.frames]
             if not self.morrendo:
                 self.rect.x += self.xspeed
-            
+
         if not self.sem_controle:
             try:
                 horizontalaxis = joystick.get_axis(0)
@@ -84,29 +83,29 @@ class Einstein(pygame.sprite.Sprite):
                             self.frame = 0
                         self.image = self.reverse_images[self.frame//self.frames]
             except:''
-                    
-                    
+
+
             if not self.morrendo:
                 self.rect.x += self.xspeed
-        
+
     def do_jump(self):
         key = pygame.key.get_pressed()
         if self.sem_controle:
             if key[pygame.K_UP] and not self.jumping or key[pygame.K_w] and not self.jumping:
                 self.jumping = True
-        try:       
+        try:
             if not self.sem_controle:
                 buttonX = joystick.get_button(2)
                 if buttonX:
                     self.jumping = True
         except:''
-         
+
     def idle_walk(self):
         self.frame += 1
         if self.frame == self.frames*4:
             self.frame = 0
         self.image = self.images[self.frame//self.frames]
-    
+
     def do(self):
         self.do_jump()
         self.move()

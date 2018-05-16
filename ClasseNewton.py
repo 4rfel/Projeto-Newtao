@@ -3,19 +3,6 @@ import os
 
 ALPHA = (0,255,0)
 
-migue = []
-def newton_controle(test):
-    if test == 1:
-        migue.append(0)
-    else:
-        migue.append(1)
-    return ''
-
-#if migue[0] == 0:
-#    sem_controle = True
-#else:
-#    sem_controle = False
-    
 sem_controle = False
 try:
     pygame.joystick.init()
@@ -24,16 +11,12 @@ try:
 except:''
 
 
-
-pygame.mixer.init()
 pygame.init()
-right_feet = pygame.mixer.Sound('Sound_effects\\sfx_step_grass_r.wav')
-left_feet = pygame.mixer.Sound('Sound_effects\\sfx_step_grass_l.wav')
 
 
 
 class Newton(pygame.sprite.Sprite):
-    
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
@@ -58,66 +41,66 @@ class Newton(pygame.sprite.Sprite):
         self.rect.y = y
         self.xspeed = 0
         self.jumping = False
-        self.morrendo = False 
+        self.morrendo = False
         self.pe = True
         self.sem_controle = False
-        
+
     def move(self):
         self.xspeed = 0
         key = pygame.key.get_pressed()
         if self.sem_controle:
             if self.rect.x < 730:
                 if key[pygame.K_RIGHT] or key[pygame.K_d]:
-                    self.xspeed = 12
+                    self.xspeed = 10
                     self.frame += 1
                     if self.frame > 3*self.frames:
                         self.frame = 0
                     self.image = self.images[self.frame//self.frames]
             if self.rect.x >=0:
                 if key[pygame.K_LEFT] or key[pygame.K_a]:
-                    self.xspeed = -12
+                    self.xspeed = -10
                     self.frame += 1
                     if self.frame > 3*self.frames:
                         self.frame = 0
                     self.image = self.reverse_images[self.frame//self.frames]
             if not self.morrendo:
                 self.rect.x += self.xspeed
-            
+
         if not self.sem_controle:
             try:
                 horizontalaxis = joystick.get_axis(0)
                 if self.rect.x < 730:
                     if horizontalaxis > 0.1:
-                        self.xspeed = 12
+                        self.xspeed = 10
                         self.frame += 1
                         if self.frame > self.frames*2:
                             self.frame = 0
                         self.image = self.images[self.frame//self.frames]
                 if self.rect.x >=0:
                     if horizontalaxis < -0.1:
-                        self.xspeed = -12
+                        self.xspeed = -10
                         self.frame += 1
                         if self.frame > self.frames*2:
                             self.frame = 0
                         self.image = self.reverse_images[self.frame//self.frames]
             except:''
-                    
-                    
+
+
             if not self.morrendo:
                 self.rect.x += self.xspeed
-        
+
     def do_jump(self):
         key = pygame.key.get_pressed()
         if self.sem_controle:
             if key[pygame.K_UP] and not self.jumping or key[pygame.K_w] and not self.jumping:
                 self.jumping = True
-        try:       
+        try:
             if not self.sem_controle:
                 buttonX = joystick.get_button(2)
                 if buttonX:
                     self.jumping = True
         except:''
-         
+
     def idle_walk(self):
         self.frame += 1
         if self.frame == self.frames*4:
@@ -133,7 +116,7 @@ class Newton(pygame.sprite.Sprite):
 #                self.pe = True
             self.frame = 0
         self.image = self.images[self.frame//self.frames]
-    
+
     def do(self):
         self.do_jump()
         self.move()
