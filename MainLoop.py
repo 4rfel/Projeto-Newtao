@@ -9,15 +9,20 @@ from random import randrange
 from background import Arvores
 import json
 from Chaos import Chao_continuo
+import Buracopreto as bla
 from Buraco import Buraco
 from Power_apple import Power_apple
 from Power_bar import Power_bar
+import Imagen_poder as imagem
 from Sky import Sky
 from Mostrador import Mostrador
 from Menu import Menu_imagens
 from ClasseEinstein import Einstein
 from ClasseHawking import Hawking
 from firebase import firebase
+import time
+
+
 
 firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
 if firebase.get('highscore', None) is None:
@@ -147,7 +152,7 @@ maxJump = player_maxJump
 timer_poder = 0
 power_cd = 0
 apples_to_power = 5
-poder_ativado = False
+
 
 power_bar = Power_bar(20,450)
 power_bar_group = pygame.sprite.Group()
@@ -220,7 +225,7 @@ while menu_rodando:
             newton.sem_controle = False
 #            personagem = 'newton'
 #            personagem = 'einstein'
-            personagem = 'hawking'
+            #personagem = 'hawking'
 
             if personagem == 'newton':
                  newton = Newton(200,340)
@@ -234,8 +239,6 @@ while menu_rodando:
                 hawking = Hawking(200,340)
                 player_group.add(hawking)
                 hawking.sem_controle = False
-
-
     except:''
 
 
@@ -255,6 +258,11 @@ if not sem_controle:
     #einstein = Einstein(200,340)
     #player_group.add(einstein)
 
+imagem_poder_group = pygame.sprite.Group()
+animacao = True
+
+if personagem == 'hawking':
+    blackhole_group = pygame.sprite.Group()
 
 #Mostrador da maças
 some = 0
@@ -314,13 +322,18 @@ while vidas > 0:
     # poder especial
     if poder_ativado:
         timer_poder += 1
-        if timer_poder == FPS*5:
+        if personagem == 'einstein':
+            FPS = 30
+        if timer_poder == FPS*8:
             poder_ativado = False
+            blackhole_group.remove(blackhole)
+            animacao = True
             timer_poder = 0
             if personagem == 'einstein':
+                print('w')
                 FPS = 100
-        if personagem == 'einstein':
-            FPS = 60
+
+
 
 
      # spawn das maças
@@ -554,6 +567,70 @@ while vidas > 0:
                     newton.jumping = False
 
     except:''
+
+    if poder_ativado:
+        if personagem == 'newton' and animacao:
+            animacao = False
+            imagem_poder = imagem.Poderes('Animacao_poder\\Newton_poder.png', 0,-500)
+            imagem_poder_group.add(imagem_poder)
+            while imagem_poder.rect.y < Htela/2-100:
+                imagem_poder.rect.y += 4
+                sky_group.draw(tela)
+                arvore_group.draw(tela)
+                Score(pontuacao)
+                if pontuacao < highscore:
+                    HighScore(highscore)
+                else:
+                    NewHighScore(pontuacao)
+                Multiplicador(multiplicador)
+                heart_group.draw(tela)
+                #chao
+                chao_group.draw(tela)
+                lateral_group.draw(tela)
+                power_bar_group.draw(tela)
+                #player
+                player_group.draw(tela)
+                #apples
+                apple_group.draw(tela)
+                golden_apple_group.draw(tela)
+                power_apple_group.draw(tela)
+                rotten_apple_group.draw(tela)
+                falling_heart_group.draw(tela)
+
+                mostrador_group.draw(tela)
+                imagem_poder_group.draw(tela)
+                pygame.display.update()
+            time.sleep(2)
+
+            imagem_poder_group.remove(imagem_poder)
+        if personagem == 'einstein' and animacao:
+            animacao = False
+            imagem_poder = imagem.Poderes('Animacao_poder\\Einstein_poder.png', -500,Htela/2-100)
+            imagem_poder_group.add(imagem_poder)
+            while imagem_poder.rect.x < 0:
+                imagem_poder.rect.x += 5
+                imagem_poder_group.draw(tela)
+                pygame.display.update()
+            time.sleep(2)
+            while imagem_poder.rect.x < Ltela:
+                imagem_poder.rect.x += 2
+                imagem_poder_group.draw(tela)
+                pygame.display.update()
+
+            imagem_poder_group.remove(imagem_poder)
+        if personagem == 'hawking' and animacao:
+            animacao = False
+            blackhole = bla.BuracoNegro('Animacao_poder\\BlackHole.png',Ltela/2+15,Htela/2-100)
+            blackhole_group.add(blackhole)
+            imagem_poder = imagem.Poderes('Animacao_poder\Hawking_poder.png', 0,Htela/2-100)
+            imagem_poder_group.add(imagem_poder)
+            imagem_poder_group.draw(tela)
+            pygame.display.update()
+            time.sleep(2)
+            imagem_poder_group.remove(imagem_poder)
+
+
+
     #einstein
     try:
         if personagem == 'einstein':
@@ -611,20 +688,24 @@ while vidas > 0:
                         apple.rect.x -= 2
                     if apple.rect.y > Ltela/2-270:
                         apple.rect.y -= 5
-
-                apple.cair()
+                if not poder_ativado and personagem == 'newton' or personagem != 'newton':
+                    apple.cair()
                 if apple.rect.y >= Htela:
                     pontuacao -= 1
                     multiplicador = 1
                     apple_group.remove(apple)
         except:''
         try:
-             if not poder_ativado and personagem == 'newton' or personagem != 'newton':
-                for rotten_apple in rotten_apple_group:
-                    rotten_apple.cair()
-                    if rotten_apple.rect.y >= Htela:
-                        multiplicador = 1
-                        rotten_apple_group.remove(rotten_apple)
+            for rotten_apple in rotten_apple_group:
+                if poder_ativado and personagem == 'hawking':
+                    if rotten_apple.rect.x > Ltela/2-250 and rotten_apple.rect.x < Ltela/2:
+                        rotten_apple.rect.x -= 5
+                    if rotten_apple.rect.x < Ltela/2+250 and rotten_apple.rect.x > Ltela/2:
+                        rotten_apple.rect.x += 5
+                rotten_apple.cair()
+                if rotten_apple.rect.y >= Htela:
+                    multiplicador = 1
+                    rotten_apple_group.remove(rotten_apple)
         except:''
         try:
             for falling_heart in falling_heart_group:
@@ -635,8 +716,8 @@ while vidas > 0:
                         falling_heart.rect.x -= 2
                     if falling_heart.rect.y > Ltela/2-270:
                         falling_heart.rect.y -= 5
-
-                falling_heart.cair()
+                if not poder_ativado and personagem == 'newton' or personagem != 'newton':
+                    falling_heart.cair()
                 if falling_heart.rect.y >= Htela:
                     multiplicador = 1
                     falling_heart_group.remove(falling_heart)
@@ -669,7 +750,8 @@ while vidas > 0:
                         power_apple.rect.x -= 3
                     if apple.rect.y > Ltela/2-270:
                         power_apple.rect.y -= 3
-                power_apple.cair()
+                if not poder_ativado and personagem == 'newton' or personagem != 'newton':
+                    power_apple.cair()
                 if power_apple < Htela:
                     multiplicador = 1
                     power_apple_group.remove(power_apple)
@@ -700,8 +782,10 @@ while vidas > 0:
     chao_group.draw(tela)
     lateral_group.draw(tela)
     power_bar_group.draw(tela)
+    blackhole_group.draw(tela)
     #player
     player_group.draw(tela)
+
     #apples
     apple_group.draw(tela)
     golden_apple_group.draw(tela)
@@ -710,6 +794,8 @@ while vidas > 0:
     falling_heart_group.draw(tela)
 
     mostrador_group.draw(tela)
+
+
 
 
     pygame.display.update()
