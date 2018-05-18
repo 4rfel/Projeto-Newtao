@@ -54,7 +54,7 @@ def NewHighScore(highscore):
 
 def Multiplicador(multiplicador):
     font = pygame.font.SysFont(None,40)
-    text = font.render(str(int(multiplicador)) + 'X', True, gold)
+    text = font.render(str(round(multiplicador,2)) + 'X', True, gold)
     tela.blit(text,(700,100))
 
 black = (0,0,0)
@@ -191,9 +191,9 @@ while menu_rodando:
                  sem_controle = True
                  menu_rodando = False
 
-                 personagem = 'newton'
+                 #personagem = 'newton'
                  #personagem = 'einstein'
-                 #personagem = 'hawking'
+                 personagem = 'hawking'
 
                  if personagem == 'newton':
                      newton = Newton(200,340)
@@ -394,20 +394,20 @@ while vidas > 0:
             #coletar maças
             colisions = pygame.sprite.spritecollide(newton, apple_group, True)
             for e in colisions:
-                pontuacao += 1 * int(multiplicador)
-                multiplicador += 0.01
+                pontuacao += 1 * multiplicador
+                multiplicador += 0.1
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(newton, power_apple_group, True)
             for e in colisions:
                 if power_bar.power < apples_to_power:
                     power_bar.power += 1
                     power_cd += 1
-                pontuacao += 5 * int(multiplicador)
-                multiplicador += 0.05
+                pontuacao += 5 * multiplicador
+                multiplicador += 0.25
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(newton, golden_apple_group, True)
             for e in colisions:
-                pontuacao += 150 * int(multiplicador)
+                pontuacao += 150 * multiplicador
                 multiplicador += 0.5
 
             #pegar coraçoes
@@ -419,8 +419,8 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * int(multiplicador)
-                    multiplicador += 0.03
+                    pontuacao += 10 * multiplicador
+                    multiplicador += 0.3
                 vidas += 1
     except:''
 
@@ -453,20 +453,20 @@ while vidas > 0:
             #coletar maças
             colisions = pygame.sprite.spritecollide(einstein, apple_group, True)
             for e in colisions:
-                pontuacao += 1 * int(multiplicador)
-                multiplicador += 0.01
+                pontuacao += 1 * multiplicador
+                multiplicador += 0.1
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(einstein, power_apple_group, True)
             for e in colisions:
                 if power_bar.power < apples_to_power:
                     power_bar.power += 1
                     power_cd += 1
-                pontuacao += 5 * int(multiplicador)
-                multiplicador += 0.05
+                pontuacao += 5 * multiplicador
+                multiplicador += 0.25
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(einstein, golden_apple_group, True)
             for e in colisions:
-                pontuacao += 150 * int(multiplicador)
+                pontuacao += 150 * multiplicador
                 multiplicador += 0.5
 
             #pegar coraçoes
@@ -478,8 +478,8 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * int(multiplicador)
-                    multiplicador += 0.03
+                    pontuacao += 10 * multiplicador
+                    multiplicador += 0.3
                 vidas += 1
     except:''
 
@@ -512,20 +512,20 @@ while vidas > 0:
             #coletar maças
             colisions = pygame.sprite.spritecollide(hawking, apple_group, True)
             for e in colisions:
-                pontuacao += 1 * int(multiplicador)
-                multiplicador += 0.01
+                pontuacao += 1 * multiplicador
+                multiplicador += 0.1
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(hawking, power_apple_group, True)
             for e in colisions:
                 if power_bar.power < apples_to_power:
                     power_bar.power += 1
                     power_cd += 1
-                pontuacao += 5 * int(multiplicador)
-                multiplicador += 0.05
+                pontuacao += 5 * multiplicador
+                multiplicador += 0.25
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(hawking, golden_apple_group, True)
             for e in colisions:
-                pontuacao += 150 * int(multiplicador)
+                pontuacao += 150 * multiplicador
                 multiplicador += 0.5
 
             #pegar coraçoes
@@ -537,8 +537,8 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * int(multiplicador)
-                    multiplicador += 0.03
+                    pontuacao += 10 * multiplicador
+                    multiplicador += 0.3
                 vidas += 1
     except:''
 
