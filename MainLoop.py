@@ -19,16 +19,16 @@ from Mostrador import Mostrador
 from Menu import Menu_imagens
 from ClasseEinstein import Einstein
 from ClasseHawking import Hawking
-from firebase import firebase
+#from firebase import firebase
 import time
 
 
 
-firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
-if firebase.get('highscore', None) is None:
-    highscore = {}
-else:
-    highscore = firebase.get('highscore', None)
+#firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
+#if firebase.get('highscore', None) is None:
+#    highscore = {}
+#else:
+#    highscore = firebase.get('highscore', None)
 
 with open('highscore.json', 'r') as h:
     highscore = int(json.loads(h.read()))
@@ -37,13 +37,10 @@ with open('highscore.json', 'r') as h:
 Htela = 500
 Ltela = 800
 
-
-
 def Score(pontuacao):
     font = pygame.font.SysFont(None, 25)
     text = font.render("Maças coletadas: " + str(int(pontuacao)), True, black)
     tela.blit(text,(0,10))
-
 
 def HighScore(highscore):
     font = pygame.font.SysFont(None, 25)
@@ -57,7 +54,7 @@ def NewHighScore(highscore):
 
 def Multiplicador(multiplicador):
     font = pygame.font.SysFont(None,40)
-    text = font.render(str(multiplicador) + 'X', True, gold)
+    text = font.render(str(int(multiplicador)) + 'X', True, gold)
     tela.blit(text,(700,100))
 
 black = (0,0,0)
@@ -82,9 +79,6 @@ pygame.display.set_caption("JOGO NO NEWTON")
 clock = pygame.time.Clock()
 vidas = 3
 pontuacao = 0
-
-
-
 
 #  Arvores
 vel_arvores = 4
@@ -142,8 +136,6 @@ heart_group.add(vidas1)
 
 #player
 player_group = pygame.sprite.Group()
-
-
 player_maxJump = 18
 maxJump = player_maxJump
 
@@ -199,9 +191,9 @@ while menu_rodando:
                  sem_controle = True
                  menu_rodando = False
 
-                 #personagem = 'newton'
+                 personagem = 'newton'
                  #personagem = 'einstein'
-                 personagem = 'hawking'
+                 #personagem = 'hawking'
 
                  if personagem == 'newton':
                      newton = Newton(200,340)
@@ -222,9 +214,8 @@ while menu_rodando:
 
             sem_controle = False
             menu_rodando = False
-            newton.sem_controle = False
-#            personagem = 'newton'
-#            personagem = 'einstein'
+            #personagem = 'newton'
+            #personagem = 'einstein'
             #personagem = 'hawking'
 
             if personagem == 'newton':
@@ -261,8 +252,8 @@ if not sem_controle:
 imagem_poder_group = pygame.sprite.Group()
 animacao = True
 
-if personagem == 'hawking':
-    blackhole_group = pygame.sprite.Group()
+
+blackhole_group = pygame.sprite.Group()
 
 #Mostrador da maças
 some = 0
@@ -298,8 +289,6 @@ while vidas > 0:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 vidas = -1
-            if event.key == pygame.K_9:
-                FPS = 100
 
 
             if sem_controle:
@@ -326,15 +315,14 @@ while vidas > 0:
             FPS = 30
         if timer_poder == FPS*8:
             poder_ativado = False
-            blackhole_group.remove(blackhole)
+            if personagem == 'hawking':
+                blackhole_group.remove(blackhole)
+
             animacao = True
             timer_poder = 0
             if personagem == 'einstein':
                 print('w')
                 FPS = 100
-
-
-
 
      # spawn das maças
     if some >= FPS*5:
@@ -406,7 +394,7 @@ while vidas > 0:
             #coletar maças
             colisions = pygame.sprite.spritecollide(newton, apple_group, True)
             for e in colisions:
-                pontuacao += 1 * multiplicador
+                pontuacao += 1 * int(multiplicador)
                 multiplicador += 0.01
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(newton, power_apple_group, True)
@@ -414,12 +402,12 @@ while vidas > 0:
                 if power_bar.power < apples_to_power:
                     power_bar.power += 1
                     power_cd += 1
-                pontuacao += 5 * multiplicador
+                pontuacao += 5 * int(multiplicador)
                 multiplicador += 0.05
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(newton, golden_apple_group, True)
             for e in colisions:
-                pontuacao += 150 * multiplicador
+                pontuacao += 150 * int(multiplicador)
                 multiplicador += 0.5
 
             #pegar coraçoes
@@ -431,7 +419,7 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * multiplicador
+                    pontuacao += 10 * int(multiplicador)
                     multiplicador += 0.03
                 vidas += 1
     except:''
@@ -465,7 +453,7 @@ while vidas > 0:
             #coletar maças
             colisions = pygame.sprite.spritecollide(einstein, apple_group, True)
             for e in colisions:
-                pontuacao += 1 * multiplicador
+                pontuacao += 1 * int(multiplicador)
                 multiplicador += 0.01
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(einstein, power_apple_group, True)
@@ -473,12 +461,12 @@ while vidas > 0:
                 if power_bar.power < apples_to_power:
                     power_bar.power += 1
                     power_cd += 1
-                pontuacao += 5 * multiplicador
+                pontuacao += 5 * int(multiplicador)
                 multiplicador += 0.05
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(einstein, golden_apple_group, True)
             for e in colisions:
-                pontuacao += 150 * multiplicador
+                pontuacao += 150 * int(multiplicador)
                 multiplicador += 0.5
 
             #pegar coraçoes
@@ -490,7 +478,7 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * multiplicador
+                    pontuacao += 10 * int(multiplicador)
                     multiplicador += 0.03
                 vidas += 1
     except:''
@@ -524,7 +512,7 @@ while vidas > 0:
             #coletar maças
             colisions = pygame.sprite.spritecollide(hawking, apple_group, True)
             for e in colisions:
-                pontuacao += 1 * multiplicador
+                pontuacao += 1 * int(multiplicador)
                 multiplicador += 0.01
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(hawking, power_apple_group, True)
@@ -532,12 +520,12 @@ while vidas > 0:
                 if power_bar.power < apples_to_power:
                     power_bar.power += 1
                     power_cd += 1
-                pontuacao += 5 * multiplicador
+                pontuacao += 5 * int(multiplicador)
                 multiplicador += 0.05
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(hawking, golden_apple_group, True)
             for e in colisions:
-                pontuacao += 150 * multiplicador
+                pontuacao += 150 * int(multiplicador)
                 multiplicador += 0.5
 
             #pegar coraçoes
@@ -549,24 +537,12 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * multiplicador
+                    pontuacao += 10 * int(multiplicador)
                     multiplicador += 0.03
                 vidas += 1
     except:''
 
-    #newton
-    try:
-        if personagem == 'newton':
-            newton.idle_walk()
-            newton.do()
-            if newton.jumping and not newton.morrendo:
-                newton.rect.y -= player_maxJump
-                player_maxJump -= 1
-                if player_maxJump < -maxJump:
-                    player_maxJump = maxJump
-                    newton.jumping = False
 
-    except:''
 
     if poder_ativado:
         if personagem == 'newton' and animacao:
@@ -620,7 +596,7 @@ while vidas > 0:
             imagem_poder_group.remove(imagem_poder)
         if personagem == 'hawking' and animacao:
             animacao = False
-            blackhole = bla.BuracoNegro('Animacao_poder\\BlackHole.png',Ltela/2+15,Htela/2-100)
+            blackhole = bla.BuracoNegro('Animacao_poder\\BlackHole.png',Ltela/2-100,Htela/2)
             blackhole_group.add(blackhole)
             imagem_poder = imagem.Poderes('Animacao_poder\Hawking_poder.png', 0,Htela/2-100)
             imagem_poder_group.add(imagem_poder)
@@ -629,7 +605,19 @@ while vidas > 0:
             time.sleep(2)
             imagem_poder_group.remove(imagem_poder)
 
+    #newton
+    try:
+        if personagem == 'newton':
+            newton.idle_walk()
+            newton.do()
+            if newton.jumping and not newton.morrendo:
+                newton.rect.y -= player_maxJump
+                player_maxJump -= 1
+                if player_maxJump < -maxJump:
+                    player_maxJump = maxJump
+                    newton.jumping = False
 
+    except:''
 
     #einstein
     try:
@@ -688,7 +676,12 @@ while vidas > 0:
                         apple.rect.x -= 2
                     if apple.rect.y > Ltela/2-270:
                         apple.rect.y -= 5
-                if not poder_ativado and personagem == 'newton' or personagem != 'newton':
+                if personagem == 'newton':
+                    if apple.rect.y >= 300 and poder_ativado:
+                        ''
+                    else: apple.cair()
+
+                if personagem != 'newton':
                     apple.cair()
                 if apple.rect.y >= Htela:
                     pontuacao -= 1
@@ -704,7 +697,7 @@ while vidas > 0:
                         rotten_apple.rect.x += 5
                 rotten_apple.cair()
                 if rotten_apple.rect.y >= Htela:
-                    multiplicador = 1
+                    multiplicador += 0.01
                     rotten_apple_group.remove(rotten_apple)
         except:''
         try:
@@ -716,30 +709,38 @@ while vidas > 0:
                         falling_heart.rect.x -= 2
                     if falling_heart.rect.y > Ltela/2-270:
                         falling_heart.rect.y -= 5
-                if not poder_ativado and personagem == 'newton' or personagem != 'newton':
+                if personagem == 'newton':
+                    if falling_heart.rect.y >= 300 and poder_ativado:
+                        ''
+                    else: falling_heart.cair()
+                if personagem != 'newton':
                     falling_heart.cair()
                 if falling_heart.rect.y >= Htela:
                     multiplicador = 1
                     falling_heart_group.remove(falling_heart)
         except:''
         try:
-            if not poder_ativado and personagem == 'newton':
-                for golden_apple in golden_apple_group:
+            for golden_apple in golden_apple_group:
+                if personagem == 'newton':
+                    if golden_apple.rect.y >= 300 and poder_ativado:
+                        ''
+                    else: golden_apple.cair()
+                if personagem != 'newton':
                     golden_apple.cair()
-                    if golden_apple.rect.y >= Htela:
-                        multiplicador = 1
-                        golden_apple_group.remove(golden_apple)
-            if personagem == 'hawking':
-                if poder_ativado:
-                    if golden_apple.rect.x < Ltela/2:
-                        golden_apple.rect.x += 2
-                    if golden_apple.rect.x > Ltela/2:
-                        golden_apple.rect.x -= 2
-                    if apple.rect.y > Ltela/2-270:
-                        golden_apple.rect.y -= 5
                 if golden_apple.rect.y >= Htela:
                     multiplicador = 1
                     golden_apple_group.remove(golden_apple)
+                if personagem == 'hawking':
+                    if poder_ativado:
+                        if golden_apple.rect.x < Ltela/2:
+                            golden_apple.rect.x += 2
+                        if golden_apple.rect.x > Ltela/2:
+                            golden_apple.rect.x -= 2
+                        if apple.rect.y > Ltela/2-270:
+                            golden_apple.rect.y -= 5
+                    if golden_apple.rect.y >= Htela:
+                        multiplicador = 1
+                        golden_apple_group.remove(golden_apple)
         except:''
         try:
             for power_apple in power_apple_group:
@@ -750,7 +751,11 @@ while vidas > 0:
                         power_apple.rect.x -= 3
                     if apple.rect.y > Ltela/2-270:
                         power_apple.rect.y -= 3
-                if not poder_ativado and personagem == 'newton' or personagem != 'newton':
+                if personagem == 'newton':
+                    if power_apple.rect.y >= 300 and poder_ativado:
+                        ''
+                    else: power_apple.cair()
+                if personagem != 'newton':
                     power_apple.cair()
                 if power_apple < Htela:
                     multiplicador = 1
@@ -794,9 +799,6 @@ while vidas > 0:
     falling_heart_group.draw(tela)
 
     mostrador_group.draw(tela)
-
-
-
 
     pygame.display.update()
 

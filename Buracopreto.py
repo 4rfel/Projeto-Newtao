@@ -5,5 +5,5 @@ class BuracoNegro(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagem)
         self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.centery = y
+        self.rect.x = x
+        self.rect.y = y
