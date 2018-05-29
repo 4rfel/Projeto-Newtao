@@ -20,6 +20,7 @@ from Menu import Menu_imagens
 from ClasseEinstein import Einstein
 from ClasseHawking import Hawking
 #from firebase import firebase
+from passaro import Passaro
 import time
 
 
@@ -31,7 +32,7 @@ import time
 #    highscore = firebase.get('highscore', None)
 
 with open('highscore.json', 'r') as h:
-    highscore = int(json.loads(h.read()))
+    highscore = json.loads(h.read())
 
 #highscore = 0
 Htela = 500
@@ -49,22 +50,33 @@ def HighScore(highscore):
 
 def NewHighScore(highscore):
     font = pygame.font.SysFont(None, 30)
-    text = font.render(" NEW HighScore: " + str(highscore), True, red)
-    tela.blit(text,(0,35))
+    text = font.render(" NEW HighScore: " + str(int(highscore)), True, red)
 
 def Multiplicador(multiplicador):
     font = pygame.font.SysFont(None,40)
     text = font.render(str(round(multiplicador,2)) + 'X', True, gold)
     tela.blit(text,(700,100))
 
+def DeathScreen(pontuacao):
+    font1 = pygame.font.SysFont(None,50)
+    font2 = pygame.font.SysFont(None,30)
+    text1 = font1.render('Você morreu e sua pontação foi de {0}'.format(int(pontuacao)), True, white)
+    if sem_controle:
+        text2 = font2.render('Aperte "R" para reiniciar ou "S" para sair', True, white)
+    if not sem_controle:
+        text2 = font2.render('Aperte "X" para reiniciar ou "START" para sair', True, white)
+    tela.blit(text1, (100, Htela/2-100))
+    tela.blit(text2, (200, Htela/2))
+
 black = (0,0,0)
 red = (255,0,0)
+white = (255,255,255)
 gold = (218,165,32)
 
 pygame.init()
 pygame.mixer.init()
-backgrond_sound = pygame.mixer.Sound('Sound_effects\\background_sound.ogg')
-#backgrond_sound = pygame.mixer.Sound('Sound_effects\\aa.wav')
+backgrond_sound = pygame.mixer.Sound('Sound_effects/background_sound.ogg')
+#backgrond_sound = pygame.mixer.Sound('Sound_effects/aa.wav')
 pygame.mixer.Sound.stop(backgrond_sound)
 
 
@@ -83,18 +95,21 @@ pontuacao = 0
 #  Arvores
 vel_arvores = 4
 
-arvore1 = Arvores("Fundos\\background.png",0,0,vel_arvores)
-arvore2 = Arvores("Fundos\\background.png",810,0,vel_arvores)
+arvore1 = Arvores("Fundos/background.png",0,0,vel_arvores)
+arvore2 = Arvores("Fundos/background.png",810,0,vel_arvores)
 arvore_group = pygame.sprite.Group()
 arvore_group.add(arvore1)
 arvore_group.add(arvore2)
+
+# passaro
+passaro_group = pygame.sprite.Group()
 
 
 # Sky
 vel_sky = 1
 
-sky1 = Sky('Fundos\\sky.png',0,0,vel_sky)
-sky2 = Sky('Fundos\\sky.png',800,0,vel_sky)
+sky1 = Sky('Fundos/sky.png',0,0,vel_sky)
+sky2 = Sky('Fundos/sky.png',800,0,vel_sky)
 sky_group = pygame.sprite.Group()
 sky_group.add(sky1)
 sky_group.add(sky2)
@@ -107,27 +122,27 @@ timer_chao = 0
 troca_chao = True
 morrer = 0
 
-chao_inteiro = Chao_continuo('Fundos\\grass.png',0,422,vel_chao)
-chao_inteiro2 = Chao_continuo('Fundos\\grass.png',700,422,vel_chao)
-chao_inteiro3 = Chao_continuo('Fundos\\grass.png',1200,422,vel_chao)
+chao_inteiro = Chao_continuo('Fundos/grass.png',0,422,vel_chao)
+chao_inteiro2 = Chao_continuo('Fundos/grass.png',700,422,vel_chao)
+chao_inteiro3 = Chao_continuo('Fundos/grass.png',1200,422,vel_chao)
 chao_group = pygame.sprite.Group()
 chao_group.add(chao_inteiro)
 chao_group.add(chao_inteiro2)
 chao_group.add(chao_inteiro3)
 
-buraco = Buraco('Fundos\\buraco.png', -500, 410, vel_chao)
+buraco = Buraco('Fundos/buraco.png', -500, 410, vel_chao)
 buraco_group = pygame.sprite.Group()
 buraco_group.add(buraco)
 
-lateral_buraco = Buraco('Fundos\\lateral.png', -500, 425, vel_chao)
+lateral_buraco = Buraco('Fundos/lateral.png', -500, 425, vel_chao)
 lateral_group = pygame.sprite.Group()
 lateral_group.add(lateral_buraco)
 
 
 #Heart
-vidas3 = Heart('Apples\\heart.png',660,50)
-vidas2 = Heart('Apples\\heart.png',700,50)
-vidas1 = Heart('Apples\\heart.png',740,50)
+vidas3 = Heart('Apples/heart.png',660,50)
+vidas2 = Heart('Apples/heart.png',700,50)
+vidas1 = Heart('Apples/heart.png',740,50)
 heart_group = pygame.sprite.Group()
 heart_group.add(vidas3)
 heart_group.add(vidas2)
@@ -162,7 +177,7 @@ power_apple_group = pygame.sprite.Group()
 paused = False
 
 #menu
-menu  = Menu_imagens('Menus\\menu_atual-0.png',0,0)
+menu = Menu_imagens('Menus/menu_atual-0.png',0,0)
 menu_group = pygame.sprite.Group()
 menu_group.add(menu)
 
@@ -173,6 +188,8 @@ menu_rodando = True
 
 
 multiplicador = 1
+contagem_multiplicador = 0
+contagem_multiplicador1 = 0
 
 # menu
 while menu_rodando:
@@ -237,30 +254,30 @@ while menu_rodando:
     pygame.display.update()
 
 if not sem_controle:
-    personagem = 'newton'
-    newton = Newton(200,340)
-    player_group.add(newton)
+    #personagem = 'newton'
+    #newton = Newton(200,340)
+    #player_group.add(newton)
 
     #personagem = 'hawking'
     #hawking = Hawking(200,340)
     #player_group.add(hawking)
 
-    #personagem == 'einstein'
-    #einstein = Einstein(200,340)
-    #player_group.add(einstein)
+    personagem = 'einstein'
+    einstein = Einstein(200,340)
+    player_group.add(einstein)
 
 imagem_poder_group = pygame.sprite.Group()
 animacao = True
-
+morto = False
 
 blackhole_group = pygame.sprite.Group()
 
 #Mostrador da maças
 some = 0
 if sem_controle:
-    mostrador = Mostrador('Fundos\\mostrador_teclado.png',(Ltela/2-100),(Htela/2-71))
+    mostrador = Mostrador('Fundos/mostrador_teclado.png',(Ltela/2-100),(Htela/2-71))
 if not sem_controle:
-    mostrador = Mostrador('Fundos\\mostrador_controle.png',(Ltela/2-100),(Htela/2-71))
+    mostrador = Mostrador('Fundos/mostrador_controle.png',(Ltela/2-100),(Htela/2-71))
 mostrador_group = pygame.sprite.Group()
 mostrador_group.add(mostrador)
 
@@ -275,7 +292,7 @@ elmigue = pygame.mixer.music.set_endevent()
 FPS = 100
 poder_ativado = False
 #Mainloop
-while vidas > 0:
+while vidas >= 0:
 
     clock.tick(FPS)
     miguezao += 1
@@ -289,6 +306,8 @@ while vidas > 0:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 vidas = -1
+            if event.key == pygame.K_SPACE and some < FPS*5:
+                some = FPS*6
 
 
             if sem_controle:
@@ -300,12 +319,85 @@ while vidas > 0:
 
         if not sem_controle:
             R2 = joystick.get_button(7)
+            R3 = joystick.get_button(11)
             if R2 and power_cd == apples_to_power and poder_ativado == False:
-#                if not poder_ativado:
-#                        power_cd = 0
-                power_cd = 0
+                if not poder_ativado:
+                        power_cd = 0
                 power_bar.power = 0
                 poder_ativado = True
+            if R3 and some <FPS*5:
+                some = FPS*6
+
+        while morto:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT :
+                     vidas = -1
+                     morto = False
+
+                if sem_controle:
+                     if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
+                             vidas = -1
+                             morto = False
+                        if event.key == pygame.K_r:
+                            vidas = 3
+                            morto = False
+                            heart_group.add(vidas1)
+                            heart_group.add(vidas2)
+                            heart_group.add(vidas3)
+                            if pontuacao > highscore:
+                                highscore = pontuacao
+                            pontuacao = 0
+
+                if not sem_controle:
+                    START = joystick.get_button(9)
+                    X = joystick.get_button(2)
+                    if START:
+                        vidas = -1
+                        morto = False
+                    if X:
+                        vidas = 3
+                        morto = False
+                        heart_group.add(vidas1)
+                        heart_group.add(vidas2)
+                        heart_group.add(vidas3)
+                        if pontuacao > highscore:
+                            highscore = pontuacao
+                        pontuacao = 0
+
+                for apple in apple_group:
+                    apple_group.remove(apple)
+                for rotten_apple in rotten_apple_group:
+                    rotten_apple_group.remove(rotten_apple)
+                for power_apple in power_apple_group:
+                    power_apple_group.remove(power_apple)
+                for golden_apple in golden_apple_group:
+                    golden_apple_group.remove(golden_apple)
+                for falling_heart in falling_heart_group:
+                    falling_heart_group.remove(falling_heart)
+                if personagem == 'newton':
+                     #player_group.remove(newton)
+                     #newton = Newton(200,340)
+                     #player_group.add(newton)
+                     newton.rect.x = 200
+                     newton.rect.y = 340
+                if personagem == 'einstein':
+                    #player_group.remove(einstein)
+                    #einstein = Einstein(200,340)
+                    #player_group.add(einstein)
+                    einstein.rect.x = 200
+                    einstein.rect.y = 340
+                if personagem == 'hawking':
+                    #player_group.remove(hawking)
+                    #hawking = Hawking(200,340)
+                    #player_group.add(hawking)
+                    hawking.rect.x = 200
+                    hawking.rect.y = 340
+                buraco.rect.x = -200
+
+                tela.fill(black)
+                DeathScreen(pontuacao)
+                pygame.display.update()
 
 
     # poder especial
@@ -321,7 +413,6 @@ while vidas > 0:
             animacao = True
             timer_poder = 0
             if personagem == 'einstein':
-                print('w')
                 FPS = 100
 
      # spawn das maças
@@ -330,35 +421,35 @@ while vidas > 0:
         if difuldade_timer == drop_interval:
             aleatorio = randrange(1,101)
             if aleatorio <= 50:
-                apple = Apple('Apples\\apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
+                apple = Apple('Apples/apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 apple_group.add(apple)
 
             if aleatorio >= 51 and aleatorio <= 55:
-                power_apple = Power_apple('Apples\\blue_apple.png',randrange(1,Ltela-100), -40, 3)
+                power_apple = Power_apple('Apples/blue_apple.png',randrange(1,Ltela-100), -40, 3)
                 power_apple_group.add(power_apple)
 
             if aleatorio >= 56 and aleatorio <= 89:
                 if not poder_ativado and personagem == 'newton' or personagem != 'newton':
                     #ativa rotten_apple
-                    rotten_apple = Rotten_apple('Apples\\rotten_apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
+                    rotten_apple = Rotten_apple('Apples/rotten_apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                     rotten_apple_group.add(rotten_apple)
 
             if aleatorio >= 90 and aleatorio <= 99 :
                 #ativa falling_heart
-                falling_heart = Falling_heart('Apples\\heart.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
+                falling_heart = Falling_heart('Apples/heart.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
                 falling_heart_group.add(falling_heart)
 
             if aleatorio >= 100:
-                golden_apple = Golden_apple('Apples\\golden_apple.png', randrange(1,Ltela-100), -40, 5)
+                golden_apple = Golden_apple('Apples/golden_apple.png', randrange(1,Ltela-100), -40, 5)
                 golden_apple_group.add(golden_apple)
 
             difuldade_timer = 0
     # aumento de dificuldade
     timer_dificuldade += 1
     if timer_dificuldade == 20*FPS:
-        if dificuldade <= 60:
+        if dificuldade <= 40:
             dificuldade += 1
-        if dificuldade > 60:
+        if dificuldade > 40:
             if drop_interval > 0:
                 drop_interval -= 1
         timer_dificuldade = 0
@@ -369,9 +460,9 @@ while vidas > 0:
         if personagem == 'newton':
             colisions = pygame.sprite.spritecollide(newton, rotten_apple_group, True)
             for e in colisions:
+                multiplicador = 1
                 if vidas == 1:
-                    heart_group.remove(vidas1)
-                    vidas = 0
+                    morto = True
                 if vidas == 2:
                     heart_group.remove(vidas2)
                     vidas = 1
@@ -390,12 +481,15 @@ while vidas > 0:
                     heart_group.remove(vidas1)
                     heart_group.remove(vidas2)
                     heart_group.remove(vidas3)
-                    vidas = -1
+                    morto = True
             #coletar maças
             colisions = pygame.sprite.spritecollide(newton, apple_group, True)
             for e in colisions:
                 pontuacao += 1 * multiplicador
-                multiplicador += 0.1
+                contagem_multiplicador += 1
+                if contagem_multiplicador == 5:
+                    multiplicador += 0.1
+                    contagem_multiplicador = 0
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(newton, power_apple_group, True)
             for e in colisions:
@@ -403,7 +497,10 @@ while vidas > 0:
                     power_bar.power += 1
                     power_cd += 1
                 pontuacao += 5 * multiplicador
-                multiplicador += 0.25
+                contagem_multiplicador1 += 2
+                if contagem_multiplicador1 == 6:
+                    multiplicador += 0.25
+                    contagem_multiplicador1 = 0
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(newton, golden_apple_group, True)
             for e in colisions:
@@ -419,18 +516,22 @@ while vidas > 0:
                     heart_group.add(vidas3)
                 if vidas == 3:
                     vidas -= 1
-                    pontuacao += 10 * multiplicador
-                    multiplicador += 0.3
+                    pontuacao += 10
                 vidas += 1
+
+            if newton.rect.y > 340 and not newton.morrendo:
+                newton.rect.y = 340
     except:''
 
     try:
         if personagem == 'einstein':
             colisions = pygame.sprite.spritecollide(einstein, rotten_apple_group, True)
             for e in colisions:
+                multiplicador = 1
                 if vidas == 1:
                     heart_group.remove(vidas1)
                     vidas = 0
+                    morto = True
                 if vidas == 2:
                     heart_group.remove(vidas2)
                     vidas = 1
@@ -449,12 +550,15 @@ while vidas > 0:
                     heart_group.remove(vidas1)
                     heart_group.remove(vidas2)
                     heart_group.remove(vidas3)
-                    vidas = -1
+                    morto = True
             #coletar maças
             colisions = pygame.sprite.spritecollide(einstein, apple_group, True)
             for e in colisions:
                 pontuacao += 1 * multiplicador
-                multiplicador += 0.1
+                contagem_multiplicador += 1
+                if contagem_multiplicador == 5:
+                    multiplicador += 0.1
+                    contagem_multiplicador = 0
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(einstein, power_apple_group, True)
             for e in colisions:
@@ -462,7 +566,10 @@ while vidas > 0:
                     power_bar.power += 1
                     power_cd += 1
                 pontuacao += 5 * multiplicador
-                multiplicador += 0.25
+                contagem_multiplicador1 += 1
+                if contagem_multiplicador1 == 5:
+                    multiplicador += 0.25
+                    contagem_multiplicador1 = 0
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(einstein, golden_apple_group, True)
             for e in colisions:
@@ -479,17 +586,20 @@ while vidas > 0:
                 if vidas == 3:
                     vidas -= 1
                     pontuacao += 10 * multiplicador
-                    multiplicador += 0.3
                 vidas += 1
+
+            if einstein.rect.y > 340 and not einstein.morrendo:
+                einstein.rect.y = 340
     except:''
 
     try:
         if personagem == 'hawking':
             colisions = pygame.sprite.spritecollide(hawking, rotten_apple_group, True)
             for e in colisions:
+                multiplicador = 1
                 if vidas == 1:
                     heart_group.remove(vidas1)
-                    vidas = 0
+                    morto = True
                 if vidas == 2:
                     heart_group.remove(vidas2)
                     vidas = 1
@@ -508,12 +618,16 @@ while vidas > 0:
                     heart_group.remove(vidas1)
                     heart_group.remove(vidas2)
                     heart_group.remove(vidas3)
-                    vidas = -1
+                    morto = True
             #coletar maças
             colisions = pygame.sprite.spritecollide(hawking, apple_group, True)
             for e in colisions:
                 pontuacao += 1 * multiplicador
-                multiplicador += 0.1
+                contagem_multiplicador += 1
+                if contagem_multiplicador == 5:
+                    multiplicador += 0.1
+                    contagem_multiplicador = 0
+
             #pegar maça azul
             colisions = pygame.sprite.spritecollide(hawking, power_apple_group, True)
             for e in colisions:
@@ -521,7 +635,10 @@ while vidas > 0:
                     power_bar.power += 1
                     power_cd += 1
                 pontuacao += 5 * multiplicador
-                multiplicador += 0.25
+                contagem_multiplicador1 += 1
+                if contagem_multiplicador1 == 5:
+                    multiplicador += 0.25
+                    contagem_multiplicador1 = 0
             # pegar maça de ouro
             colisions = pygame.sprite.spritecollide(hawking, golden_apple_group, True)
             for e in colisions:
@@ -538,16 +655,23 @@ while vidas > 0:
                 if vidas == 3:
                     vidas -= 1
                     pontuacao += 10 * multiplicador
-                    multiplicador += 0.3
                 vidas += 1
+
+            if hawking.rect.y > 340 and not hawking.morrendo:
+                hawking.rect.y = 340
     except:''
+
+    for passaro in passaro_group:
+        if passaro.rect.x <= -100:
+            passaro_group.remove(passaro)
+
 
 
 
     if poder_ativado:
         if personagem == 'newton' and animacao:
             animacao = False
-            imagem_poder = imagem.Poderes('Animacao_poder\\Newton_poder.png', 0,-500)
+            imagem_poder = imagem.Poderes('Animacao_poder/Newton_poder.png', 0,-500)
             imagem_poder_group.add(imagem_poder)
             while imagem_poder.rect.y < Htela/2-100:
                 imagem_poder.rect.y += 4
@@ -581,7 +705,7 @@ while vidas > 0:
             imagem_poder_group.remove(imagem_poder)
         if personagem == 'einstein' and animacao:
             animacao = False
-            imagem_poder = imagem.Poderes('Animacao_poder\\Einstein_poder.png', -500,Htela/2-100)
+            imagem_poder = imagem.Poderes('Animacao_poder/Einstein_poder.png', -500,Htela/2-100)
             imagem_poder_group.add(imagem_poder)
             while imagem_poder.rect.x < 0:
                 imagem_poder.rect.x += 5
@@ -596,7 +720,7 @@ while vidas > 0:
             imagem_poder_group.remove(imagem_poder)
         if personagem == 'hawking' and animacao:
             animacao = False
-            blackhole = bla.BuracoNegro('Animacao_poder\\BlackHole.png',Ltela/2-100,Htela/2)
+            blackhole = bla.BuracoNegro('Animacao_poder/BlackHole.png',Ltela/2-100,Htela/2)
             blackhole_group.add(blackhole)
             imagem_poder = imagem.Poderes('Animacao_poder\Hawking_poder.png', 0,Htela/2-100)
             imagem_poder_group.add(imagem_poder)
@@ -657,6 +781,7 @@ while vidas > 0:
     lateral_buraco.lateral()
     #power bar
     power_bar.update()
+
     #apples
 
     some += 1
@@ -674,8 +799,10 @@ while vidas > 0:
                         apple.rect.x += 2
                     if apple.rect.x > Ltela/2:
                         apple.rect.x -= 2
-                    if apple.rect.y > Ltela/2-270:
-                        apple.rect.y -= 5
+                    if apple.rect.y > Htela/2-200:
+                        apple.rect.y -= 20
+                    if apple.rect.y <= Htela/2-200:
+                        apple.rect.y = Htela/2-200
                 if personagem == 'newton':
                     if apple.rect.y >= 300 and poder_ativado:
                         ''
@@ -697,7 +824,6 @@ while vidas > 0:
                         rotten_apple.rect.x += 5
                 rotten_apple.cair()
                 if rotten_apple.rect.y >= Htela:
-                    multiplicador += 0.01
                     rotten_apple_group.remove(rotten_apple)
         except:''
         try:
@@ -707,8 +833,10 @@ while vidas > 0:
                         falling_heart.rect.x += 2
                     if falling_heart.rect.x > Ltela/2:
                         falling_heart.rect.x -= 2
-                    if falling_heart.rect.y > Ltela/2-270:
-                        falling_heart.rect.y -= 5
+                    if falling_heart.rect.y > Htela/2-200:
+                        falling_heart.rect.y -= 20
+                    if apple.rect.y <= Htela/2-200:
+                        apple.rect.y = Htela/2-200
                 if personagem == 'newton':
                     if falling_heart.rect.y >= 300 and poder_ativado:
                         ''
@@ -736,8 +864,10 @@ while vidas > 0:
                             golden_apple.rect.x += 2
                         if golden_apple.rect.x > Ltela/2:
                             golden_apple.rect.x -= 2
-                        if apple.rect.y > Ltela/2-270:
-                            golden_apple.rect.y -= 5
+                        if apple.rect.y > Htela/2-200:
+                            golden_apple.rect.y -= 20
+                        if apple.rect.y <= Htela/2-200:
+                            apple.rect.y = Htela/2-200
                     if golden_apple.rect.y >= Htela:
                         multiplicador = 1
                         golden_apple_group.remove(golden_apple)
@@ -749,8 +879,10 @@ while vidas > 0:
                         power_apple.rect.x += 3
                     if apple.rect.x > Ltela/2:
                         power_apple.rect.x -= 3
-                    if apple.rect.y > Ltela/2-270:
-                        power_apple.rect.y -= 3
+                    if apple.rect.y > Htela/2-200:
+                        power_apple.rect.y -= 20
+                    if apple.rect.y <= Htela/2-200:
+                        apple.rect.y = Htela/2-200
                 if personagem == 'newton':
                     if power_apple.rect.y >= 300 and poder_ativado:
                         ''
@@ -763,21 +895,26 @@ while vidas > 0:
         except:''
 
 
+
+
         # intervalo minimo entre os buracos
     timer_buraco += 1
+
     if timer_buraco == FPS*11:
-        aleatorio = randrange(1,4)
-        if aleatorio <= 5:
+        aleatorio = randrange(1,5)
+        if aleatorio == 4:
             buraco.rect.x = 900
             lateral_buraco.rect.x = 800
         timer_buraco = 0
+
+
 
     # background
 
     sky_group.draw(tela)
     arvore_group.draw(tela)
     Score(pontuacao)
-    if pontuacao < highscore:
+    if pontuacao < int(highscore):
         HighScore(highscore)
     else:
         NewHighScore(pontuacao)
@@ -797,7 +934,7 @@ while vidas > 0:
     power_apple_group.draw(tela)
     rotten_apple_group.draw(tela)
     falling_heart_group.draw(tela)
-
+    passaro_group.draw(tela)
     mostrador_group.draw(tela)
 
     pygame.display.update()
@@ -805,7 +942,7 @@ while vidas > 0:
 pygame.mixer.Sound.stop(backgrond_sound)
 
 
-if pontuacao > highscore:
+if int(pontuacao) > int(highscore):
     original = json.dumps(str(pontuacao), sort_keys = True, indent = 4)
 else:
     original = str(highscore)

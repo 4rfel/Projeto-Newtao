@@ -23,14 +23,14 @@ class Newton(pygame.sprite.Sprite):
         self.frames = 4
         self.reverse_images = []
         for i in range(6,10):
-            img = pygame.image.load(os.path.join('Newtons\\newton' + str(i) + '.png')).convert_alpha()
+            img = pygame.image.load(os.path.join('Newtons/newton' + str(i) + '.png')).convert_alpha()
             img = pygame.transform.scale(img, (75, 100))
             img.set_colorkey(ALPHA)
             self.reverse_images.append(img)
             self.image = self.reverse_images[0]
             self.rect  = self.image.get_rect()
         for i in range(1,5):
-            img = pygame.image.load(os.path.join('Newtons\\newton' + str(i) + '.png')).convert_alpha()
+            img = pygame.image.load(os.path.join('Newtons/newton' + str(i) + '.png')).convert_alpha()
             img = pygame.transform.scale(img, (75, 100))
             img.set_colorkey(ALPHA)
             self.images.append(img)
@@ -41,8 +41,8 @@ class Newton(pygame.sprite.Sprite):
         self.rect.y = y
         self.xspeed = 0
         self.jumping = False
+        self.xvel = 10
         self.morrendo = False
-        self.pe = True
         self.sem_controle = False
 
     def move(self):
@@ -51,14 +51,14 @@ class Newton(pygame.sprite.Sprite):
         if self.sem_controle:
             if self.rect.x < 730:
                 if key[pygame.K_RIGHT] or key[pygame.K_d]:
-                    self.xspeed = 10
+                    self.xspeed = self.xvel
                     self.frame += 1
                     if self.frame > 3*self.frames:
                         self.frame = 0
                     self.image = self.images[self.frame//self.frames]
             if self.rect.x >=0:
                 if key[pygame.K_LEFT] or key[pygame.K_a]:
-                    self.xspeed = -10
+                    self.xspeed = -self.xvel
                     self.frame += 1
                     if self.frame > 3*self.frames:
                         self.frame = 0
@@ -71,14 +71,14 @@ class Newton(pygame.sprite.Sprite):
                 horizontalaxis = joystick.get_axis(0)
                 if self.rect.x < 730:
                     if horizontalaxis > 0.1:
-                        self.xspeed = 10
+                        self.xspeed = self.xvel
                         self.frame += 1
                         if self.frame > self.frames*2:
                             self.frame = 0
                         self.image = self.images[self.frame//self.frames]
                 if self.rect.x >=0:
                     if horizontalaxis < -0.1:
-                        self.xspeed = -10
+                        self.xspeed = -self.xvel
                         self.frame += 1
                         if self.frame > self.frames*2:
                             self.frame = 0
@@ -104,16 +104,6 @@ class Newton(pygame.sprite.Sprite):
     def idle_walk(self):
         self.frame += 1
         if self.frame == self.frames*4:
-#            if self.pe:
-#                pygame.mixer.Sound.stop(left_feet)
-#                pygame.mixer.Sound.set_volume(right_feet,0.1)
-#                pygame.mixer.Sound.play(right_feet)
-#                self.pe = False
-#            else:
-#                pygame.mixer.Sound.stop(right_feet)
-#                pygame.mixer.Sound.set_volume(left_feet,0.1)
-#                pygame.mixer.Sound.play(left_feet)
-#                self.pe = True
             self.frame = 0
         self.image = self.images[self.frame//self.frames]
 
