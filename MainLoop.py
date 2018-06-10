@@ -20,9 +20,7 @@ from Menu import Menu_imagens
 from ClasseEinstein import Einstein
 from ClasseHawking import Hawking
 #from firebase import firebase
-from passaro import Passaro
 import time
-
 
 
 #firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
@@ -101,8 +99,7 @@ arvore_group = pygame.sprite.Group()
 arvore_group.add(arvore1)
 arvore_group.add(arvore2)
 
-# passaro
-passaro_group = pygame.sprite.Group()
+
 
 
 # Sky
@@ -298,7 +295,7 @@ while vidas >= 0:
     miguezao += 1
     if miguezao == 1:
         pygame.mixer.Sound.set_volume(backgrond_sound,0.3)
-        pygame.mixer.Sound.play(backgrond_sound)
+        pygame.mixer.Sound.play(backgrond_sound, -1)
     for event in pygame.event.get():
     #exit
         if event.type == pygame.QUIT :
@@ -311,7 +308,7 @@ while vidas >= 0:
 
 
             if sem_controle:
-                if event.key == pygame.K_SPACE and power_cd == apples_to_power and poder_ativado == False:
+                if event.key == pygame.K_SPACE and power_cd == 0 and poder_ativado == False:
                     if not poder_ativado:
                         power_cd = 0
                     power_bar.power = 0
@@ -376,21 +373,12 @@ while vidas >= 0:
                 for falling_heart in falling_heart_group:
                     falling_heart_group.remove(falling_heart)
                 if personagem == 'newton':
-                     #player_group.remove(newton)
-                     #newton = Newton(200,340)
-                     #player_group.add(newton)
                      newton.rect.x = 200
                      newton.rect.y = 340
                 if personagem == 'einstein':
-                    #player_group.remove(einstein)
-                    #einstein = Einstein(200,340)
-                    #player_group.add(einstein)
                     einstein.rect.x = 200
                     einstein.rect.y = 340
                 if personagem == 'hawking':
-                    #player_group.remove(hawking)
-                    #hawking = Hawking(200,340)
-                    #player_group.add(hawking)
                     hawking.rect.x = 200
                     hawking.rect.y = 340
                 buraco.rect.x = -200
@@ -661,10 +649,6 @@ while vidas >= 0:
                 hawking.rect.y = 340
     except:''
 
-    for passaro in passaro_group:
-        if passaro.rect.x <= -100:
-            passaro_group.remove(passaro)
-
 
 
 
@@ -720,9 +704,9 @@ while vidas >= 0:
             imagem_poder_group.remove(imagem_poder)
         if personagem == 'hawking' and animacao:
             animacao = False
-            blackhole = bla.BuracoNegro('Animacao_poder/BlackHole.png',Ltela/2-100,Htela/2)
+            blackhole = bla.BuracoNegro('Animacao_poder/BlackHole.png',Ltela/2-60,Htela/2-200)
             blackhole_group.add(blackhole)
-            imagem_poder = imagem.Poderes('Animacao_poder\Hawking_poder.png', 0,Htela/2-100)
+            imagem_poder = imagem.Poderes('Animacao_poder\Hawking_poder.png', 0,Htela/2-150)
             imagem_poder_group.add(imagem_poder)
             imagem_poder_group.draw(tela)
             pygame.display.update()
@@ -799,10 +783,10 @@ while vidas >= 0:
                         apple.rect.x += 2
                     if apple.rect.x > Ltela/2:
                         apple.rect.x -= 2
-                    if apple.rect.y > Htela/2-200:
+                    if apple.rect.y > Htela/2-150:
                         apple.rect.y -= 20
-                    if apple.rect.y <= Htela/2-200:
-                        apple.rect.y = Htela/2-200
+                    if apple.rect.y <= Htela/2-150:
+                        apple.rect.y = Htela/2-150
                 if personagem == 'newton':
                     if apple.rect.y >= 300 and poder_ativado:
                         ''
@@ -818,7 +802,7 @@ while vidas >= 0:
         try:
             for rotten_apple in rotten_apple_group:
                 if poder_ativado and personagem == 'hawking':
-                    if rotten_apple.rect.x > Ltela/2-250 and rotten_apple.rect.x < Ltela/2:
+                    if rotten_apple.rect.x > Ltela/2-2 and rotten_apple.rect.x < Ltela/2:
                         rotten_apple.rect.x -= 5
                     if rotten_apple.rect.x < Ltela/2+250 and rotten_apple.rect.x > Ltela/2:
                         rotten_apple.rect.x += 5
@@ -833,10 +817,10 @@ while vidas >= 0:
                         falling_heart.rect.x += 2
                     if falling_heart.rect.x > Ltela/2:
                         falling_heart.rect.x -= 2
-                    if falling_heart.rect.y > Htela/2-200:
+                    if falling_heart.rect.y > Htela/2-150:
                         falling_heart.rect.y -= 20
-                    if apple.rect.y <= Htela/2-200:
-                        apple.rect.y = Htela/2-200
+                    if apple.rect.y <= Htela/2-150:
+                        apple.rect.y = Htela/2-150
                 if personagem == 'newton':
                     if falling_heart.rect.y >= 300 and poder_ativado:
                         ''
@@ -864,10 +848,10 @@ while vidas >= 0:
                             golden_apple.rect.x += 2
                         if golden_apple.rect.x > Ltela/2:
                             golden_apple.rect.x -= 2
-                        if apple.rect.y > Htela/2-200:
+                        if apple.rect.y > Htela/2-150:
                             golden_apple.rect.y -= 20
-                        if apple.rect.y <= Htela/2-200:
-                            apple.rect.y = Htela/2-200
+                        if apple.rect.y <= Htela/2-150:
+                            apple.rect.y = Htela/2-150
                     if golden_apple.rect.y >= Htela:
                         multiplicador = 1
                         golden_apple_group.remove(golden_apple)
@@ -879,10 +863,10 @@ while vidas >= 0:
                         power_apple.rect.x += 3
                     if apple.rect.x > Ltela/2:
                         power_apple.rect.x -= 3
-                    if apple.rect.y > Htela/2-200:
+                    if apple.rect.y > Htela/2-150:
                         power_apple.rect.y -= 20
-                    if apple.rect.y <= Htela/2-200:
-                        apple.rect.y = Htela/2-200
+                    if apple.rect.y <= Htela/2-150:
+                        apple.rect.y = Htela/2-150
                 if personagem == 'newton':
                     if power_apple.rect.y >= 300 and poder_ativado:
                         ''
@@ -934,7 +918,6 @@ while vidas >= 0:
     power_apple_group.draw(tela)
     rotten_apple_group.draw(tela)
     falling_heart_group.draw(tela)
-    passaro_group.draw(tela)
     mostrador_group.draw(tela)
 
     pygame.display.update()

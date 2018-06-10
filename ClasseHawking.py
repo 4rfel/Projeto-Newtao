@@ -22,14 +22,15 @@ class Hawking(pygame.sprite.Sprite):
         self.frames = 4
         self.reverse_images = []
         for i in range(6,10):
-            img = pygame.image.load(os.path.join('Newtons/newton' + str(i) + '.png')).convert_alpha()
+            img = pygame.image.load(os.path.join('Hawkings/Hawking' + str(i) + '.png')).convert_alpha()
             img = pygame.transform.scale(img, (75, 100))
+            img = pygame.transform.flip(img,1,0)
             img.set_colorkey(ALPHA)
             self.reverse_images.append(img)
             self.image = self.reverse_images[0]
             self.rect  = self.image.get_rect()
         for i in range(1,5):
-            img = pygame.image.load(os.path.join('Newtons/newton' + str(i) + '.png')).convert_alpha()
+            img = pygame.image.load(os.path.join('Hawkings/Hawking' + str(i) + '.png')).convert_alpha()
             img = pygame.transform.scale(img, (75, 100))
             img.set_colorkey(ALPHA)
             self.images.append(img)
