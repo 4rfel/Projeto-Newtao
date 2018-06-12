@@ -21,6 +21,9 @@ from ClasseEinstein import Einstein
 from ClasseHawking import Hawking
 #from firebase import firebase
 import time
+import os
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 
 #firebase = firebase.FirebaseApplication('https://highscore-global.firebaseio.com/', None)
@@ -206,8 +209,8 @@ while menu_rodando:
                  menu_rodando = False
 
                  #personagem = 'newton'
-                 #personagem = 'einstein'
-                 personagem = 'hawking'
+                 personagem = 'einstein'
+                 #personagem = 'hawking'
 
                  if personagem == 'newton':
                      newton = Newton(200,340)
@@ -285,17 +288,18 @@ dificuldade = 5
 timer_dificuldade = 0
 drop_interval = 30
 miguezao = 0
-elmigue = pygame.mixer.music.set_endevent()
 FPS = 100
 poder_ativado = False
+
+#musica
+pygame.mixer.Sound.set_volume(backgrond_sound,0.3)
+pygame.mixer.Sound.play(backgrond_sound, -1)
+
 #Mainloop
 while vidas >= 0:
 
     clock.tick(FPS)
-    miguezao += 1
-    if miguezao == 1:
-        pygame.mixer.Sound.set_volume(backgrond_sound,0.3)
-        pygame.mixer.Sound.play(backgrond_sound, -1)
+
     for event in pygame.event.get():
     #exit
         if event.type == pygame.QUIT :
@@ -325,34 +329,18 @@ while vidas >= 0:
             if R3 and some <FPS*5:
                 some = FPS*6
 
-        while morto:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT :
-                     vidas = -1
-                     morto = False
+    while morto:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT :
+                 vidas = -1
+                 morto = False
 
-                if sem_controle:
-                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
-                             vidas = -1
-                             morto = False
-                        if event.key == pygame.K_r:
-                            vidas = 3
-                            morto = False
-                            heart_group.add(vidas1)
-                            heart_group.add(vidas2)
-                            heart_group.add(vidas3)
-                            if pontuacao > highscore:
-                                highscore = pontuacao
-                            pontuacao = 0
-
-                if not sem_controle:
-                    START = joystick.get_button(9)
-                    X = joystick.get_button(2)
-                    if START:
-                        vidas = -1
-                        morto = False
-                    if X:
+            if sem_controle:
+                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
+                         vidas = -1
+                         morto = False
+                    if event.key == pygame.K_r:
                         vidas = 3
                         morto = False
                         heart_group.add(vidas1)
@@ -362,30 +350,46 @@ while vidas >= 0:
                             highscore = pontuacao
                         pontuacao = 0
 
-                for apple in apple_group:
-                    apple_group.remove(apple)
-                for rotten_apple in rotten_apple_group:
-                    rotten_apple_group.remove(rotten_apple)
-                for power_apple in power_apple_group:
-                    power_apple_group.remove(power_apple)
-                for golden_apple in golden_apple_group:
-                    golden_apple_group.remove(golden_apple)
-                for falling_heart in falling_heart_group:
-                    falling_heart_group.remove(falling_heart)
-                if personagem == 'newton':
-                     newton.rect.x = 200
-                     newton.rect.y = 340
-                if personagem == 'einstein':
-                    einstein.rect.x = 200
-                    einstein.rect.y = 340
-                if personagem == 'hawking':
-                    hawking.rect.x = 200
-                    hawking.rect.y = 340
-                buraco.rect.x = -200
+            if not sem_controle:
+                START = joystick.get_button(9)
+                X = joystick.get_button(2)
+                if START:
+                    vidas = -1
+                    morto = False
+                if X:
+                    vidas = 3
+                    morto = False
+                    heart_group.add(vidas1)
+                    heart_group.add(vidas2)
+                    heart_group.add(vidas3)
+                    if pontuacao > highscore:
+                        highscore = pontuacao
+                    pontuacao = 0
 
-                tela.fill(black)
-                DeathScreen(pontuacao)
-                pygame.display.update()
+            for apple in apple_group:
+                apple_group.remove(apple)
+            for rotten_apple in rotten_apple_group:
+                rotten_apple_group.remove(rotten_apple)
+            for power_apple in power_apple_group:
+                power_apple_group.remove(power_apple)
+            for golden_apple in golden_apple_group:
+                golden_apple_group.remove(golden_apple)
+            for falling_heart in falling_heart_group:
+                falling_heart_group.remove(falling_heart)
+            if personagem == 'newton':
+                 newton.rect.x = 200
+                 newton.rect.y = 340
+            if personagem == 'einstein':
+                einstein.rect.x = 200
+                einstein.rect.y = 340
+            if personagem == 'hawking':
+                hawking.rect.x = 200
+                hawking.rect.y = 340
+            buraco.rect.x = -200
+
+            tela.fill(black)
+            DeathScreen(pontuacao)
+            pygame.display.update()
 
 
     # poder especial
@@ -409,22 +413,22 @@ while vidas >= 0:
         if difuldade_timer == drop_interval:
             aleatorio = randrange(1,101)
             if aleatorio <= 50:
-                apple = Apple('Apples/apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
+                apple = Apple('Apples/apple.png', randrange(1,Ltela-100), -40, randrange(dificuldade-4,dificuldade))
                 apple_group.add(apple)
 
             if aleatorio >= 51 and aleatorio <= 55:
-                power_apple = Power_apple('Apples/blue_apple.png',randrange(1,Ltela-100), -40, 3)
+                power_apple = Power_apple('Apples/blue_apple.png',randrange(1,Ltela-100), -40, dificuldade-4)
                 power_apple_group.add(power_apple)
 
             if aleatorio >= 56 and aleatorio <= 89:
                 if not poder_ativado and personagem == 'newton' or personagem != 'newton':
                     #ativa rotten_apple
-                    rotten_apple = Rotten_apple('Apples/rotten_apple.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
+                    rotten_apple = Rotten_apple('Apples/rotten_apple.png', randrange(1,Ltela-100), -40, randrange(dificuldade-4,dificuldade))
                     rotten_apple_group.add(rotten_apple)
 
             if aleatorio >= 90 and aleatorio <= 99 :
                 #ativa falling_heart
-                falling_heart = Falling_heart('Apples/heart.png', randrange(1,Ltela-100), -40, randrange(1,dificuldade))
+                falling_heart = Falling_heart('Apples/heart.png', randrange(1,Ltela-100), -40, randrange(dificuldade-4,dificuldade))
                 falling_heart_group.add(falling_heart)
 
             if aleatorio >= 100:
@@ -435,9 +439,9 @@ while vidas >= 0:
     # aumento de dificuldade
     timer_dificuldade += 1
     if timer_dificuldade == 20*FPS:
-        if dificuldade <= 40:
+        if dificuldade <= 30:
             dificuldade += 1
-        if dificuldade > 40:
+        if dificuldade > 30:
             if drop_interval > 0:
                 drop_interval -= 1
         timer_dificuldade = 0
@@ -879,14 +883,12 @@ while vidas >= 0:
         except:''
 
 
-
-
         # intervalo minimo entre os buracos
     timer_buraco += 1
 
     if timer_buraco == FPS*11:
         aleatorio = randrange(1,5)
-        if aleatorio == 4:
+        if aleatorio >= 3:
             buraco.rect.x = 900
             lateral_buraco.rect.x = 800
         timer_buraco = 0
